@@ -1,0 +1,48 @@
+=encoding utf8
+
+=head1 NAME
+
+pocoirc - A command line tool for launching
+L<POE::Component::IRC|POE::Component::IRC> clients
+
+=head1 SYNOPSIS
+
+B<pocoirc> <options>
+
+ Options:
+   -c FOO, --config FOO         Use config file FOO
+   -d, --debug                  Show IRC protocol lines
+   -v, --version                Print version
+   -h, --help                   Print this usage message
+
+ When not using a config file, you can use these:
+   -s FOO, --server FOO         Connect to server FOO
+   -n FOO, --nickname FOO       Use nickname FOO
+   -u FOO, --username FOO       Use username FOO
+   -i FOO, --realname FOO        Use realname FOO
+   -p PLUGIN, --plugin PLUGIN   Load plugin PLUGIN (see below)
+   -6, --ipv6,                  Use IPv6
+   -S, --ssl,                   Use SSL
+   -q, --qnet                   Use POE::Component::IRC::Qnet::State
+
+ PLUGIN mentioned above should consist of the plugin name, zero or more
+ whitespace, and possibly a JSON hash of arguments to the plugin's
+ constructor:
+
+  -p AutoJoin
+  -p 'AutoJoin{"ReJoinOnKick":0}'
+  -p 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
+  -p 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
+
+=head1 AUTHOR
+
+Hinrik E<Ouml>rn SigurE<eth>sson, hinrik.sig@gmail.com
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2010 Hinrik E<Ouml>rn SigurE<eth>sson
+
+This program is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

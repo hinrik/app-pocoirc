@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 
-my $file = 'lib/POE/Quickie.pm';
+my $file = 'bin/pocoirc';
 my $old = qx"git rev-parse HEAD:$file 2>/dev/null";
 my $new = qx"git rev-parse :$file 2>/dev/null";
 
