@@ -1,0 +1,7 @@
+nickname: foo
+username: bar
+realname: baz
+
+networks:
+    freenode:
+        server: irc.freenode.net
