@@ -308,11 +308,10 @@ sub _status {
 
     if (defined $self->{cfg}{log_file}) {
         my $fh;
-        if (!open($fh, '>>', $self->{cfg}{log_file}) && !$self->{daemonize}) {
+        if (!open($fh, '>>:encoding(utf8)', $self->{cfg}{log_file}) && !$self->{daemonize}) {
             warn "Can't open $self->{cfg}{log_file}: $!\n";
         }
 
-        binmode $fh, ':utf8';
         $fh->autoflush(1);
         print $fh $message;
         close $fh;
@@ -440,7 +439,7 @@ Just like Perl's I<-I>.
 
 C<log_file> is the path to a log to which status messages will be written.
 
-=head2 C<network>
+=head2 Networks
 
 The C<network> option should be an array of network hashes. A network hash
 consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.

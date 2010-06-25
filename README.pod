@@ -55,7 +55,7 @@ Just like Perl's I<-I>.
 
 C<log_file> is the path to a log to which status messages will be written.
 
-=head2 C<network>
+=head2 Networks
 
 The C<network> option should be an array of network hashes. A network hash
 consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.
