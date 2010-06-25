@@ -2,53 +2,68 @@
 
 use strict;
 use warnings;
-use App::Pocoirc;
-use Getopt::Long qw(:config autohelp);
+use Getopt::Long qw(:config autohelp no_ignore_case);
 use Pod::Usage;
-use JSON qw(decode_json);
-use YAML::XS qw(LoadFile);
 
 my %args;
 GetOptions(
     'c|config=s'   => \$args{cfg_file},
     'v|verbose'    => \$args{verbose},
+    'd|daemonize'  => \$args{daemonize},
     '6|ipv6'       => \$args{ipv6},
     'S|ssl'        => \$args{ssl},
-    'q|qnet'       => \$args{qnet},
+    'I|lib=s'      => \$args{lib},
+    'l|log-file'   => \$args{log_file},
+    'C|class=s'    => \$args{class},
     's|server=s'   => \$args{server},
-    'n|nickname=s' => \$args{nickname},
+    'n|nick=s'     => \$args{nick},
     'u|username=s' => \$args{username},
-    'i|realname=s' => \$args{realname},
+    'i|ircname=s'  => \$args{ircname},
     'p|plugin=s@'  => \$args{plugin_specs},
+    'V|version'    => sub {
+        no strict 'vars';
+        my $version = defined $App::Pocoirc::VERSION
+            ? $App::Pocoirc::VERSION
+            : 'dev-git';
+        print "Version $version\n";
+    },
 ) or pod2usage();
 
 my @plugins;
-for my $plugspec (@{ $args{plugin_specs} }) {
-    my ($name, $json) = $plugspec =~ /^([A-Za-z0-9]+)\s*(.+)?/;
-    die "Missing plugin name for option --plugin\n" if !defined $name;
+if ($args{plugin_specs} && @{ $args{plugin_specs} }) {
+    require JSON::XS;
+    JSON::XS->import('decode_json');
 
-    my $plug_args;
-    if (defined $json) {
-        eval { $plug_args = decode_json($json) };
-        if ($@) {
-            chomp $@;
-            die "Invalid JSON argument for plugin $name: $@\n"
+    for my $plugspec (@{ $args{plugin_specs} }) {
+        my ($class, $json) = $plugspec =~ /^([:A-Za-z0-9]+)\s*(.+)?/;
+        die "Missing plugin class for option --plugin\n" if !defined $class;
+
+        my $plug_args;
+        if (defined $json) {
+            eval { $plug_args = decode_json($json) };
+            if ($@) {
+                chomp $@;
+                die "Invalid JSON argument for plugin $class: $@\n"
+            }
+            if (ref $plug_args ne 'HASH') {
+                die "JSON argument for plugin $class should be an array\n";
+            }
         }
-        if (ref $plug_args ne 'HASH') {
-            die "JSON argument for plugin $name should be an array\n";
-        }
+
+        push @plugins, [$class, $plug_args];
     }
-
-    push @plugins, [$name, defined $plug_args ? $plug_args : {}];
 }
 
 my $config;
 if (defined $args{cfg_file}) {
+    require YAML::XS;
+    YAML::XS->import('LoadFile');
+
     eval { $config = LoadFile($args{cfg_file}) };
 
     if ($@) {
         chomp $@;
-        die "Invalid YAML in $args{cfg_file}: $@\n"
+        die "Failed to read YAML data from $args{cfg_file}: $@\n"
     }
     if (ref $config ne 'HASH') {
         die "YAML data in $args{cfg_file} should be an hash\n";
@@ -56,24 +71,25 @@ if (defined $args{cfg_file}) {
 }
 else {
     $config = {
-        networks => {
-            default => {
-                server   => $args{server},
-                ipv6     => $args{ipv6},
-                ssl      => $args{ssl},
-                qnet     => $args{qnet},
-                nickname => $args{nickname},
-                username => $args{username},
-                realname => $args{realname},
-                plugins  => \@plugins,
+        networks => [
+            {
+                name => 'default',
+                local_plugins => \@plugins,
+                map {
+                    defined $args{$_} ? ($_ => $args{$_}) : ()
+                } qw(class server nick username ircname ipv6 ssl),
             }
-        },
+        ],
     };
 }
 
+require App::Pocoirc;
 App::Pocoirc->new(
-    config  => %$config,
-    verbose => $args{verbose},
+    cfg       => $config,
+    verbose   => $args{verbose},
+    lib       => $args{lib},
+    log_file  => $args{log_file},
+    daemonize => $args{daemonize},
 )->run();
 
 =encoding utf8
@@ -89,22 +105,25 @@ B<pocoirc> <options>
 
  Options:
    -c FOO, --config FOO         Use config file FOO
-   -d, --debug                  Show IRC protocol lines
-   -v, --version                Print version
+   -I FOO, --lib FOO            A Perl library directory of plugins
+   -l, --log-file               Write status messages to this log file
+   -d, --daemonize              Run in the background
+   -v, --verbose                Show IRC protocol messages
+   -V, --version                Print version
    -h, --help                   Print this usage message
 
  When not using a config file, you can use these:
    -s FOO, --server FOO         Connect to server FOO
    -n FOO, --nickname FOO       Use nickname FOO
    -u FOO, --username FOO       Use username FOO
-   -i FOO, --realname FOO        Use realname FOO
+   -i FOO, --ircname FOO        Use ircname FOO
    -p PLUGIN, --plugin PLUGIN   Load plugin PLUGIN (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
-   -q, --qnet                   Use POE::Component::IRC::Qnet::State
+   -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
 
- PLUGIN mentioned above should consist of the plugin name, zero or more
- whitespace, and possibly a JSON hash of arguments to the plugin's
+ PLUGIN mentioned above should consist of the plugin class name, zero or
+ more  whitespace, and possibly a JSON hash of arguments to the plugin's
  constructor:
 
   -p AutoJoin

@@ -11,22 +11,25 @@ B<pocoirc> <options>
 
  Options:
    -c FOO, --config FOO         Use config file FOO
-   -d, --debug                  Show IRC protocol lines
-   -v, --version                Print version
+   -I FOO, --lib FOO            A Perl library directory of plugins
+   -l, --log-file               Write status messages to this log file
+   -d, --daemonize              Run in the background
+   -v, --verbose                Show IRC protocol messages
+   -V, --version                Print version
    -h, --help                   Print this usage message
 
  When not using a config file, you can use these:
    -s FOO, --server FOO         Connect to server FOO
    -n FOO, --nickname FOO       Use nickname FOO
    -u FOO, --username FOO       Use username FOO
-   -i FOO, --realname FOO        Use realname FOO
+   -i FOO, --ircname FOO        Use ircname FOO
    -p PLUGIN, --plugin PLUGIN   Load plugin PLUGIN (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
-   -q, --qnet                   Use POE::Component::IRC::Qnet::State
+   -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
 
- PLUGIN mentioned above should consist of the plugin name, zero or more
- whitespace, and possibly a JSON hash of arguments to the plugin's
+ PLUGIN mentioned above should consist of the plugin class name, zero or
+ more  whitespace, and possibly a JSON hash of arguments to the plugin's
  constructor:
 
   -p AutoJoin
