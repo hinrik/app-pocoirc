@@ -21,3 +21,4 @@ verbose  = 3
 [-ErrorHandling::RequireCheckingReturnValueOfEval]
 
 [-Modules::ProhibitAutomaticExportation]
+[-InputOutput::RequireBriefOpen]
