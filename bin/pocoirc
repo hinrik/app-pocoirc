@@ -46,7 +46,7 @@ if ($args{plugin_specs} && @{ $args{plugin_specs} }) {
                 die "Invalid JSON argument for plugin $class: $@\n"
             }
             if (ref $plug_args ne 'HASH') {
-                die "JSON argument for plugin $class should be an array\n";
+                die "JSON argument for plugin $class should be a hash\n";
             }
         }
 
