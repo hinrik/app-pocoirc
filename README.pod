@@ -78,6 +78,14 @@ multiple IRC components simultaneously
 If you specify C<local_plugins> at the top level, it will serve as a default
 list of local plugins, which can be overridden in a network hash.
 
+=head1 TODO
+
+=over 4
+
+=item * Check if a plugin is already loaded before calling require() on it
+
+=back
+
 =head1 AUTHOR
 
 Hinrik E<Ouml>rn SigurE<eth>sson, hinrik.sig@gmail.com
