@@ -2,42 +2,74 @@
 
 =head1 NAME
 
-pocoirc - A command line tool for launching
-L<POE::Component::IRC|POE::Component::IRC> clients
+App::Pocoirc - The guts of L<pocoirc>
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
-B<pocoirc> <options>
+This distribution provides a generic way to launch IRC clients which use
+L<POE::Component::IRC|POE::Component::IRC>. The main features are:
 
- Options:
-   -c FOO, --config FOO         Use config file FOO
-   -I FOO, --lib FOO            A Perl library directory of plugins
-   -l, --log-file               Write status messages to this log file
-   -d, --daemonize              Run in the background
-   -v, --verbose                Show IRC protocol messages
-   -V, --version                Print version
-   -h, --help                   Print this usage message
+=over 4
 
- When not using a config file, you can use these:
-   -s FOO, --server FOO         Connect to server FOO
-   -n FOO, --nickname FOO       Use nickname FOO
-   -u FOO, --username FOO       Use username FOO
-   -i FOO, --ircname FOO        Use ircname FOO
-   -p PLUGIN, --plugin PLUGIN   Load plugin PLUGIN (see below)
-   -6, --ipv6,                  Use IPv6
-   -S, --ssl,                   Use SSL
-   -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
+=item * Prints useful status information (to your terminal or a log file)
 
- PLUGIN mentioned above should consist of the plugin class name, zero or
- more  whitespace, and possibly a JSON hash of arguments to the plugin's
- constructor:
+=item * Will daemonize if you so wish
 
-  -p AutoJoin
-  -p 'AutoJoin{"ReJoinOnKick":0}'
-  -p 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
-  -p 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
+=item * Supports a configuration file
 
- For documentation on the configuration file, see perldoc App::Pocoirc
+=item * Offers a user friendly way to pass arguments to POE::Component::IRC
+
+=item * Supports multiple IRC components and lets you specify which plugins
+to load locally (one object per component) or globally (single object)
+
+=back
+
+=head1 CONFIGURATION
+
+ nick: foobar1234
+ username: foobar
+
+ global_plugins:
+   - [CTCP]
+
+ local_plugins:
+   - [BotTraffic]
+
+ networks:
+   - name:   freenode
+     server: irc.freenode.net
+     local_plugins:
+       - [AutoJoin, { Channels: ['#foodsfdsf'] } ]
+
+   - name:   magnet
+     server: irc.perl.org
+     nick:   hlagherf32fr
+
+The configuration file is in L<YAML|YAML> format. It consists of a hash
+containing C<global_plugins>, C<local_plugins>, C<networks>, and default
+parameters to POE::Component::IRC, of which only C<networks> is required.
+
+=head2 C<network>
+
+The C<network> option should be an array of network hashes. A network hash
+consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.
+Only C<name> and C<server> (a POE::Component::IRC parameter) are required.
+The POE::Component::IRC parameters specified in this hash will override the
+ones specified at the top level.
+
+=head2 Plugins
+
+The C<global_plugins> and C<local_plugins> options should consist of an array
+containing the short plugin class name (e.g. 'AutoJoin') and optionally a hash
+of arguments to that plugin. App::Pocoirc will first try to load
+POE::Component::IRC::Plugin::I<your_plugin> before trying to load
+I<your_plugin>.
+
+The plugins in C<global_plugins> will be instantiated once and then added to
+all IRC components.
+
+If you specify C<local_plugins> at the top level, it will serve as a default
+list of local plugins, which can be overridden in a network hash.
 
 =head1 AUTHOR
 
