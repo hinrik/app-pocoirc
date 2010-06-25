@@ -131,6 +131,8 @@ B<pocoirc> <options>
   -p 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
   -p 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
 
+ For documentation on the configuration file, see perldoc App::Pocoirc
+
 =head1 AUTHOR
 
 Hinrik E<Ouml>rn SigurE<eth>sson, hinrik.sig@gmail.com

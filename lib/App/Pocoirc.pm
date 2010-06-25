@@ -164,7 +164,6 @@ sub irc_notice {
     if (defined $irc->server_name() && $sender ne $irc->server_name()) {
         return;
     }
-    #return if $sender ne $irc->server_name();
 
     $self->_status("Server notice: $notice", $irc);
     return;
@@ -375,9 +374,78 @@ sub _exit {
 
 1;
 
+=encoding utf8
+
 =head1 NAME
 
-App::Pocoirc - Backend class for L<pocoirc>
+App::Pocoirc - The guts of L<pocoirc>
+
+=head1 DESCRIPTION
+
+This distribution provides a generic way to launch IRC clients which use
+L<POE::Component::IRC|POE::Component::IRC>. The main features are:
+
+=over 4
+
+=item * Prints useful status information (to your terminal or a log file)
+
+=item * Will daemonize if you so wish
+
+=item * Supports a configuration file
+
+=item * Offers a user friendly way to pass arguments to POE::Component::IRC
+
+=item * Supports multiple IRC components and lets you specify which plugins
+to load locally (one object per component) or globally (single object)
+
+=back
+
+=head1 CONFIGURATION
+
+ nick: foobar1234
+ username: foobar
+
+ global_plugins:
+   - [CTCP]
+
+ local_plugins:
+   - [BotTraffic]
+
+ networks:
+   - name:   freenode
+     server: irc.freenode.net
+     local_plugins:
+       - [AutoJoin, { Channels: ['#foodsfdsf'] } ]
+
+   - name:   magnet
+     server: irc.perl.org
+     nick:   hlagherf32fr
+
+The configuration file is in L<YAML|YAML> format. It consists of a hash
+containing C<global_plugins>, C<local_plugins>, C<networks>, and default
+parameters to POE::Component::IRC, of which only C<networks> is required.
+
+=head2 C<network>
+
+The C<network> option should be an array of network hashes. A network hash
+consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.
+Only C<name> and C<server> (a POE::Component::IRC parameter) are required.
+The POE::Component::IRC parameters specified in this hash will override the
+ones specified at the top level.
+
+=head2 Plugins
+
+The C<global_plugins> and C<local_plugins> options should consist of an array
+containing the short plugin class name (e.g. 'AutoJoin') and optionally a hash
+of arguments to that plugin. App::Pocoirc will first try to load
+POE::Component::IRC::Plugin::I<your_plugin> before trying to load
+I<your_plugin>.
+
+The plugins in C<global_plugins> will be instantiated once and then added to
+all IRC components.
+
+If you specify C<local_plugins> at the top level, it will serve as a default
+list of local plugins, which can be overridden in a network hash.
 
 =head1 AUTHOR
 
