@@ -11,7 +11,7 @@ L<POE::Component::IRC|POE::Component::IRC>. The main features are:
 
 =over 4
 
-=item * Prints useful status information (to your terminal or a log file)
+=item * Prints useful status information (to your terminal and/or a log file)
 
 =item * Will daemonize if you so wish
 
@@ -46,8 +46,14 @@ to load locally (one object per component) or globally (single object)
      nick:   hlagherf32fr
 
 The configuration file is in L<YAML|YAML> format. It consists of a hash
-containing C<global_plugins>, C<local_plugins>, C<networks>, and default
-parameters to POE::Component::IRC, of which only C<networks> is required.
+containing C<global_plugins>, C<local_plugins>, C<networks>, C<lib>,
+C<log_file>, and default parameters to POE::Component::IRC. Only C<networks>
+is required.
+
+C<lib> is an array of directories containing Perl modules (e.g. plugins).
+Just like Perl's I<-I>.
+
+C<log_file> is the path to a log to which status messages will be written.
 
 =head2 C<network>
 

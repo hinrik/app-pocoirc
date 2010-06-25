@@ -12,8 +12,8 @@ GetOptions(
     'd|daemonize'  => \$args{daemonize},
     '6|ipv6'       => \$args{ipv6},
     'S|ssl'        => \$args{ssl},
-    'I|lib=s'      => \$args{lib},
-    'l|log-file'   => \$args{log_file},
+    'I|lib=s@'     => \$args{lib},
+    'l|log-file=s' => \$args{log_file},
     'C|class=s'    => \$args{class},
     's|server=s'   => \$args{server},
     'n|nick=s'     => \$args{nick},
@@ -71,13 +71,14 @@ if (defined $args{cfg_file}) {
 }
 else {
     $config = {
+        (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file)),
         networks => [
             {
                 name => 'default',
                 local_plugins => \@plugins,
-                map {
+                (map {
                     defined $args{$_} ? ($_ => $args{$_}) : ()
-                } qw(class server nick username ircname ipv6 ssl),
+                } qw(class server nick username ircname ipv6 ssl)),
             }
         ],
     };
@@ -86,10 +87,8 @@ else {
 require App::Pocoirc;
 App::Pocoirc->new(
     cfg       => $config,
-    verbose   => $args{verbose},
-    lib       => $args{lib},
-    log_file  => $args{log_file},
     daemonize => $args{daemonize},
+    (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(verbose))
 )->run();
 
 =encoding utf8
@@ -105,8 +104,6 @@ B<pocoirc> <options>
 
  Options:
    -c FOO, --config FOO         Use config file FOO
-   -I FOO, --lib FOO            A Perl library directory of plugins
-   -l, --log-file               Write status messages to this log file
    -d, --daemonize              Run in the background
    -v, --verbose                Show IRC protocol messages
    -V, --version                Print version
@@ -121,6 +118,8 @@ B<pocoirc> <options>
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
+   -I FOO, --lib FOO            A Perl library directory of plugins
+   -l, --log-file               Write status messages to this log file
 
  PLUGIN mentioned above should consist of the plugin class name, zero or
  more  whitespace, and possibly a JSON hash of arguments to the plugin's

@@ -13,18 +13,11 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    if (defined $self->{lib} && @{ $self->{lib} }) {
-        unshift @INC, @{ $self->{lib} };
-    }
-
-    if (defined $self->{log_file}) {
-        open my $fh, '>>', $self->{log_file} or die "Can't open $self->{log_file}: $!\n";
+    if (defined $self->{cfg}{log_file}) {
+        open my $fh, '>>', $self->{cfg}{log_file}
+            or die "Can't open $self->{cfg}{log_file}: $!\n";
         close $fh;
     }
-
-    # construct global plugins
-    $self->_status("Constructing global plugins");
-    $self->{global_plugs} = $self->_create_plugins(delete $self->{cfg}{global_plugins});
 
     if ($self->{daemonize}) {
         require Proc::Daemon;
@@ -69,10 +62,20 @@ sub run {
 sub _start {
     my ($kernel, $session, $self) = @_[KERNEL, SESSION, OBJECT];
 
+    $self->_status("Started");
+
     $kernel->sig(DIE => '_exception');
     $kernel->sig(INT => '_exit');
     
     my @ircs;
+
+    if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
+        unshift @INC, @{ $self->{cfg}{lib} };
+    }
+
+    # construct global plugins
+    $self->_status("Constructing global plugins");
+    $self->{global_plugs} = $self->_create_plugins(delete $self->{cfg}{global_plugins});
 
     # construct IRC components
     for my $opts (@{ $self->{cfg}{networks} }) {
@@ -296,16 +299,22 @@ sub _status {
     my ($self, $message, $context) = @_;
 
     my $stamp = strftime('%Y-%m-%d %H:%M:%S', localtime);
-    $context = 'GLOBAL' if !defined $context;
     my $irc; eval { $irc = $context->isa('POE::Component::IRC') };
     $context = $self->_irc_to_network($context) if $irc;
+    $context = defined $context ? " [$context]" : '';
     
-    $message = "$stamp [$context] $message\n";
+    $message = "$stamp$context $message\n";
     print $message if !$self->{daemonize};
 
-    if ($self->{log_file}) {
-        open my $fh, '>>', $self->{log_file} or warn "Can't open $self->{log_file}: $!\n";
-        print $fh "$message\n";
+    if (defined $self->{cfg}{log_file}) {
+        my $fh;
+        if (!open($fh, '>>', $self->{cfg}{log_file}) && !$self->{daemonize}) {
+            warn "Can't open $self->{cfg}{log_file}: $!\n";
+        }
+
+        binmode $fh, ':utf8';
+        $fh->autoflush(1);
+        print $fh $message;
         close $fh;
     }
 
@@ -387,7 +396,7 @@ L<POE::Component::IRC|POE::Component::IRC>. The main features are:
 
 =over 4
 
-=item * Prints useful status information (to your terminal or a log file)
+=item * Prints useful status information (to your terminal and/or a log file)
 
 =item * Will daemonize if you so wish
 
@@ -422,8 +431,14 @@ to load locally (one object per component) or globally (single object)
      nick:   hlagherf32fr
 
 The configuration file is in L<YAML|YAML> format. It consists of a hash
-containing C<global_plugins>, C<local_plugins>, C<networks>, and default
-parameters to POE::Component::IRC, of which only C<networks> is required.
+containing C<global_plugins>, C<local_plugins>, C<networks>, C<lib>,
+C<log_file>, and default parameters to POE::Component::IRC. Only C<networks>
+is required.
+
+C<lib> is an array of directories containing Perl modules (e.g. plugins).
+Just like Perl's I<-I>.
+
+C<log_file> is the path to a log to which status messages will be written.
 
 =head2 C<network>
 
