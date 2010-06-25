@@ -56,17 +56,38 @@ if ($args{plugin_specs} && @{ $args{plugin_specs} }) {
 
 my $config;
 if (defined $args{cfg_file}) {
-    require YAML::XS;
-    YAML::XS->import('LoadFile');
+    if ($args{cfg_file} =~ /\.yml$/i) {
+        require YAML::XS;
+        YAML::XS->import('LoadFile');
 
-    eval { $config = LoadFile($args{cfg_file}) };
+        eval { $config = LoadFile($args{cfg_file}) };
 
-    if ($@) {
-        chomp $@;
-        die "Failed to read YAML data from $args{cfg_file}: $@\n"
+        if ($@) {
+            chomp $@;
+            die "Failed to read YAML data from $args{cfg_file}: $@\n"
+        }
+        if (ref $config ne 'HASH') {
+            die "YAML data in $args{cfg_file} should be a hash\n";
+        }
     }
-    if (ref $config ne 'HASH') {
-        die "YAML data in $args{cfg_file} should be an hash\n";
+    elsif ($args{cfg_file} =~ /\.json$/i) {
+        require JSON::XS;
+        JSON::XS->import('decode_json');
+
+        open my $fh, '<', $args{cfg_file} or die "Can't open $args{cfg_file}: $!\n";
+        my $json = do { local $/; <$fh> };
+
+        eval { $config = decode_json($json) };
+        if ($@) {
+            chomp $@;
+            die "Failed to read JSON data from $args{cfg_file}: $@\n"
+        }
+        if (ref $config ne 'HASH') {
+            die "JSON data in $args{cfg_file} be a hash\n";
+        }
+    }
+    else {
+        die "Config file format not supported, it must be YAML or JSON\n";
     }
 }
 else {

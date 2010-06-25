@@ -45,8 +45,8 @@ to load locally (one object per component) or globally (single object)
      server: irc.perl.org
      nick:   hlagherf32fr
 
-The configuration file is in L<YAML|YAML> format. It consists of a hash
-containing C<global_plugins>, C<local_plugins>, C<networks>, C<lib>,
+The configuration file is in L<YAML|YAML> or L<JSON|JSON> format. It consists
+of a hash containing C<global_plugins>, C<local_plugins>, C<networks>, C<lib>,
 C<log_file>, and default parameters to POE::Component::IRC. Only C<networks>
 is required.
 
