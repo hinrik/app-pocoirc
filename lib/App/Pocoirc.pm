@@ -436,7 +436,7 @@ C<log_file>, and default parameters to POE::Component::IRC. Only C<networks>
 is required.
 
 C<lib> is an array of directories containing Perl modules (e.g. plugins).
-Just like Perl's I<< -I >>.
+Just like Perl's I<-I>.
 
 C<log_file> is the path to a log to which status messages will be written.
 
