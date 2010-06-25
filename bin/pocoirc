@@ -29,31 +29,6 @@ GetOptions(
     },
 ) or pod2usage();
 
-my @plugins;
-if ($args{plugin_specs} && @{ $args{plugin_specs} }) {
-    require JSON::XS;
-    JSON::XS->import('decode_json');
-
-    for my $plugspec (@{ $args{plugin_specs} }) {
-        my ($class, $json) = $plugspec =~ /^([:A-Za-z0-9]+)\s*(.+)?/;
-        die "Missing plugin class for option --plugin\n" if !defined $class;
-
-        my $plug_args;
-        if (defined $json) {
-            eval { $plug_args = decode_json($json) };
-            if ($@) {
-                chomp $@;
-                die "Invalid JSON argument for plugin $class: $@\n"
-            }
-            if (ref $plug_args ne 'HASH') {
-                die "JSON argument for plugin $class should be a hash\n";
-            }
-        }
-
-        push @plugins, [$class, $plug_args];
-    }
-}
-
 my $config;
 if (defined $args{cfg_file}) {
     if ($args{cfg_file} =~ /\.yml$/i) {
@@ -91,6 +66,31 @@ if (defined $args{cfg_file}) {
     }
 }
 else {
+    my @plugins;
+    if ($args{plugin_specs} && @{ $args{plugin_specs} }) {
+        require JSON::XS;
+        JSON::XS->import('decode_json');
+
+        for my $plugspec (@{ $args{plugin_specs} }) {
+            my ($class, $json) = $plugspec =~ /^([:A-Za-z0-9]+)\s*(.+)?/;
+            die "Missing plugin class for option --plugin\n" if !defined $class;
+
+            my $plug_args;
+            if (defined $json) {
+                eval { $plug_args = decode_json($json) };
+                if ($@) {
+                    chomp $@;
+                    die "Invalid JSON argument for plugin $class: $@\n"
+                }
+                if (ref $plug_args ne 'HASH') {
+                    die "JSON argument for plugin $class should be a hash\n";
+                }
+            }
+
+            push @plugins, [$class, $plug_args];
+        }
+    }
+
     $config = {
         (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file)),
         networks => [
