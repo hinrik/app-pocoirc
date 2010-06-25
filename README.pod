@@ -135,14 +135,6 @@ Here is some example output from the program:
  2010-06-25 20:21:55 [magnet] Deleted plugin CTCP2
  2010-06-25 20:21:55 [magnet] Deleted plugin Whois6
 
-=head1 TODO
-
-=over 4
-
-=item * Check if a plugin is already loaded before calling require() on it
-
-=back
-
 =head1 AUTHOR
 
 Hinrik E<Ouml>rn SigurE<eth>sson, hinrik.sig@gmail.com
