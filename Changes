@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.02  Fri Jun 25 20:26:42 GMT 2010
     - Support JSON config files too, not just YAML
     - Add some example output to the documentation
 
