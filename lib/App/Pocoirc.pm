@@ -457,7 +457,7 @@ I<your_plugin>.
 
 The plugins in C<global_plugins> will be instantiated once and then added to
 all IRC components. B<Note:> not all plugins are designed to be used with
-multiple IRC components simultaneously
+multiple IRC components simultaneously.
 
 If you specify C<local_plugins> at the top level, it will serve as a default
 list of local plugins, which can be overridden in a network hash.
