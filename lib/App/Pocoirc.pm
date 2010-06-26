@@ -360,6 +360,7 @@ sub _exception {
     chomp $ex->{error_str};
     warn "Event $ex->{event} in session "
         .$ex->{dest_session}->ID." raised exception:\n  $ex->{error_str}\n";
+    $self->_shutdown('Caught exception');
     $kernel->sig_handled();
     return;
 }
@@ -368,15 +369,24 @@ sub _exit {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
     $self->_status('Caught interrupt signal, exiting...');
-    for my $irc (@{ $self->{ircs} }) {
-        my ($network, $obj) = @$irc;
-        $obj->connected
-            ? $obj->yield(quit => 'Caught interrupt')
-            : $obj->shutdown();
-    }
-    $self->{shutdown} = 1;
-
+    $self->_shutdown('Caught interrupt');
     $kernel->sig_handled();
+    return;
+}
+
+sub _shutdown {
+    my ($self, $reason) = @_;
+
+    if (!$self->{shutdown}) {
+        for my $irc (@{ $self->{ircs} }) {
+            my ($network, $obj) = @$irc;
+            $obj->connected
+                ? $obj->yield(quit => $reason)
+                : $obj->shutdown();
+        }
+        $self->{shutdown} = 1;
+    }
+
     return;
 }
 

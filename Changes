@@ -1,6 +1,7 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+    - Shut down if we catch an exception in our code
 
 0.04  Sat Jun 26 05:48:13 GMT 2010
     - Don't require server to be specified in a network hash if a default
