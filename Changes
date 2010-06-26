@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.05  Sat Jun 26 06:08:47 GMT 2010
     - Shut down if we catch an exception in our code
 
 0.04  Sat Jun 26 05:48:13 GMT 2010
