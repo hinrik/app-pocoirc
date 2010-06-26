@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.03  Sat Jun 26 04:44:32 GMT 2010
     - Only parse plugin options when not using a config file
     - Set our process name to 'pocoirc'
 
