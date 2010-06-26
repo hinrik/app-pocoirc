@@ -83,12 +83,12 @@ sub _start {
         my $network = delete $opts->{name};
         my $class = delete $opts->{class};
         
-        if (!defined $opts->{server}) {
-            die "Server for network '$network' not specified\n";
-        }
-
         while (my ($opt, $value) = each %{ $self->{cfg} }) {
             $opts->{$opt} = $value if !defined $opts->{$opt};
+        }
+
+        if (!defined $opts->{server}) {
+            die "Server for network '$network' not specified\n";
         }
         
         # construct network-specific plugins
@@ -443,7 +443,7 @@ C<log_file> is the path to a log to which status messages will be written.
 
 The C<network> option should be an array of network hashes. A network hash
 consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.
-Only C<name> and C<server> (a POE::Component::IRC parameter) are required.
+Only C<name> (and C<server> if not defined the top level) is required.
 The POE::Component::IRC parameters specified in this hash will override the
 ones specified at the top level.
 
