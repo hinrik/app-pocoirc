@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+    - Don't print raw protocol lines simply because some plugin happens to
+      enable raw events in POE::Component::IRC
 
 0.05  Sat Jun 26 06:08:47 GMT 2010
     - Shut down if we catch an exception in our code

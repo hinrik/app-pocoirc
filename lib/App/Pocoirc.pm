@@ -290,6 +290,7 @@ sub irc_plugin_error {
 
 sub irc_raw {
     my ($self, $raw) = @_[OBJECT, ARG0];
+    return if !$self->{verbose};
     my $irc = $_[SENDER]->get_heap();
     $self->_status("->$raw", $irc);
     return;
