@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.06  Sun Jun 27 08:34:55 GMT 2010
     - Don't print raw protocol lines simply because some plugin happens to
       enable raw events in POE::Component::IRC
     - Install INT signal handler after we load POE::Component::IRC, not
