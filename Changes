@@ -3,6 +3,9 @@ Revision history for POE-Quickie
 {{$NEXT}}
     - Don't print raw protocol lines simply because some plugin happens to
       enable raw events in POE::Component::IRC
+    - Install INT signal handler after we load POE::Component::IRC, not
+      before. Avoids an issue with Net::DNS (or a dependency of it) clearing
+      $SIG{INT} on Perl 5.13.2
 
 0.05  Sat Jun 26 06:08:47 GMT 2010
     - Shut down if we catch an exception in our code

@@ -65,7 +65,6 @@ sub _start {
     $self->_status("Started");
 
     $kernel->sig(DIE => '_exception');
-    $kernel->sig(INT => '_exit');
     
     my @ircs;
 
@@ -133,6 +132,8 @@ sub _start {
 
     delete $self->{global_plugs};
     delete $self->{local_plugs};
+
+    $kernel->sig(INT => '_exit');
 
     return;
 }
