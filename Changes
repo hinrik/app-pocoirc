@@ -2,6 +2,7 @@ Revision history for POE-Quickie
 
 {{$NEXT}}
     - Color exceptions red when using terminal colors
+    - Make sure we exit on exception when using multiple components
 
 0.08  Mon Jun 28 20:00:32 GMT 2010
     - Fix problem with terminal color codes working across newlines

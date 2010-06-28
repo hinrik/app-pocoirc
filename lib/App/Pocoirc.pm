@@ -71,8 +71,6 @@ sub _start {
 
     $kernel->sig(DIE => '_exception');
     
-    my @ircs;
-
     if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
         unshift @INC, @{ $self->{cfg}{lib} };
     }
@@ -83,9 +81,9 @@ sub _start {
 
     # construct IRC components
     for my $opts (@{ $self->{cfg}{networks} }) {
-        die "Network name missing\n" if !defined $opts->{name};
         my $network = delete $opts->{name};
         my $class = delete $opts->{class};
+        die "Network name missing\n" if !defined $network;
         
         while (my ($opt, $value) = each %{ $self->{cfg} }) {
             $opts->{$opt} = $value if !defined $opts->{$opt};
@@ -107,10 +105,8 @@ sub _start {
         $self->_status('Spawning IRC component', $network);
         my $irc = $class->spawn(%$opts);
 
-        push @ircs, [$network, $irc];
+        push @{ $self->{ircs} }, [$network, $irc];
     }
-
-    $self->{ircs} = \@ircs;
 
     for my $entry (@{ $self->{ircs} }) {
         my ($network, $irc) = @$entry;
