@@ -352,10 +352,16 @@ sub _create_plugins {
 
         my $fullclass = "POE::Component::IRC::Plugin::$class";
         my $canonclass = $fullclass;
+        my $error;
         eval "require $fullclass";
         if ($@) {
+            $error .= $@;
             eval "require $class";
-            die "Failed to load plugin $class or $fullclass\n" if $@;
+            if ($@) {
+                chomp $@;
+                $error .= $@;
+                die "Failed to load plugin $class or $fullclass: $error\n";
+            }
             $canonclass = $class;
         }
 
