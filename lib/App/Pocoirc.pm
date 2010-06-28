@@ -310,14 +310,14 @@ sub _status {
     $context = $self->_irc_to_network($context) if $irc;
     $context = defined $context ? " [$context]" : '';
     
-    $message = "$stamp$context $message\n";
+    $message = "$stamp$context $message";
 
     if (!$self->{daemonize}) {
         if ($error) {
-            print colored($message, 'red');
+            print colored($message, 'red'), "\n";
         }
         else {
-            print colored($message, 'green');
+            print colored($message, 'green'), "\n";
         }
     }
 
@@ -328,7 +328,7 @@ sub _status {
         }
 
         $fh->autoflush(1);
-        print $fh $message;
+        print $fh $message, "\n";
         close $fh;
     }
 
