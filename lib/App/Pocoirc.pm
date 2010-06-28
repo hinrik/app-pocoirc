@@ -373,8 +373,13 @@ sub _create_plugins {
 sub _exception {
     my ($kernel, $self, $ex) = @_[KERNEL, OBJECT, ARG1];
     chomp $ex->{error_str};
-    warn "Event $ex->{event} in session "
-        .$ex->{dest_session}->ID." raised exception:\n  $ex->{error_str}\n";
+
+    my @errors = (
+        "Event $ex->{event} in session ".$ex->{dest_session}->ID." raised exception:",
+        "    $ex->{error_str}",
+    );
+
+    $self->_status($_, undef, 1) for @errors;
     $self->_shutdown('Caught exception');
     $kernel->sig_handled();
     return;
