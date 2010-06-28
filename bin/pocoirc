@@ -20,6 +20,7 @@ GetOptions(
     'c|config=s'   => \$args{cfg_file},
     'v|verbose'    => \$args{verbose},
     'd|daemonize'  => \$args{daemonize},
+    'N|no-color'   => \$args{no_color},
     '6|ipv6'       => \$args{ipv6},
     'S|ssl'        => \$args{ssl},
     'I|lib=s@'     => \$args{lib},
@@ -118,8 +119,9 @@ else {
 require App::Pocoirc;
 App::Pocoirc->new(
     cfg       => $config,
-    daemonize => $args{daemonize},
-    (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(verbose))
+    (map {
+        defined $args{$_} ? ($_ => $args{$_}) : ()
+    } qw(daemonize verbose no_color))
 )->run();
 
 =encoding utf8
@@ -137,6 +139,7 @@ B<pocoirc> <options>
    -c FOO, --config FOO         Use config file FOO
    -d, --daemonize              Run in the background
    -v, --verbose                Show IRC protocol messages
+   -N, --no-color               Don't use terminal colors
    -V, --version                Print version
    -h, --help                   Print this usage message
 

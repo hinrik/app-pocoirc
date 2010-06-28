@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+    - Use terminal colors for status messages, to easily differentiate it
+      from other output
 
 0.06  Sun Jun 27 08:34:55 GMT 2010
     - Don't print raw protocol lines simply because some plugin happens to
