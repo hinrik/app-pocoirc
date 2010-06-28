@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.10  Mon Jun 28 21:39:05 GMT 2010
     - Print compilation errors if we fail to load a plugin
 
 0.09  Mon Jun 28 21:24:31 GMT 2010
