@@ -2,6 +2,7 @@ package App::Pocoirc;
 
 use strict;
 use warnings;
+use IO::Handle;
 use POE;
 use POSIX 'strftime';
 
