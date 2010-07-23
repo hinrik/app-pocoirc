@@ -47,8 +47,9 @@ to load locally (one object per component) or globally (single object)
 
 The configuration file is in L<YAML|YAML> or L<JSON|JSON> format. It consists
 of a hash containing C<global_plugins>, C<local_plugins>, C<networks>, C<lib>,
-C<log_file>, and default parameters to POE::Component::IRC. Only C<networks>
-is required.
+C<log_file>, and default parameters to
+L<POE::Component::IRC|POE::Component::IRC/spawn>. Only C<networks> is
+required.
 
 C<lib> is an array of directories containing Perl modules (e.g. plugins).
 Just like Perl's I<-I>.
