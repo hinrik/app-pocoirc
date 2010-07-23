@@ -405,7 +405,7 @@ sub _shutdown {
             my ($network, $obj) = @$irc;
             $obj->connected
                 ? $obj->yield(quit => $reason)
-                : $obj->shutdown();
+                : $obj->yield('shutdown');
         }
         $self->{shutdown} = 1;
     }
