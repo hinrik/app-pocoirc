@@ -7,7 +7,8 @@ use Pod::Usage;
 
 my %args;
 GetOptions(
-    'c|config=s'   => \$args{cfg_file},
+    'c|check'      => \$args{check_cfg},
+    'f|config=s'   => \$args{cfg_file},
     'v|verbose'    => \$args{verbose},
     'd|daemonize'  => \$args{daemonize},
     'N|no-color'   => \$args{no_color},
@@ -121,7 +122,7 @@ App::Pocoirc->new(
     cfg       => $config,
     (map {
         defined $args{$_} ? ($_ => $args{$_}) : ()
-    } qw(daemonize verbose no_color))
+    } qw(check_cfg daemonize verbose no_color))
 )->run();
 
 =encoding utf8
@@ -136,7 +137,8 @@ L<POE::Component::IRC|POE::Component::IRC> clients
 B<pocoirc> <options>
 
  Options:
-   -c FOO, --config FOO         Use config file FOO
+   -c, --check                  Check if config is valid and code compiles
+   -f FOO, --config FOO         Use config file FOO
    -d, --daemonize              Run in the background
    -v, --verbose                Show IRC protocol messages
    -N, --no-color               Don't use terminal colors

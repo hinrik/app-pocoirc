@@ -25,7 +25,7 @@ sub run {
         Term::ANSIColor->import();
     }
 
-    if ($self->{daemonize}) {
+    if ($self->{daemonize} && !$self->{check_cfg}) {
         require Proc::Daemon;
         eval { Proc::Daemon::Init->() };
         chomp $@;
@@ -68,13 +68,44 @@ sub run {
 sub _start {
     my ($kernel, $session, $self) = @_[KERNEL, SESSION, OBJECT];
 
-    $self->_status("Started");
-
     $kernel->sig(DIE => '_exception');
-    
+
     if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
         unshift @INC, @{ $self->{cfg}{lib} };
     }
+
+    $self->_require_plugin($_) for @{ $self->{cfg}{global_plugins} || [] };
+
+    for my $opts (@{ $self->{cfg}{networks} }) {
+        $self->_require_plugin($_) for @{ $opts->{local_plugins} || [] };
+
+        die "Network name missing\n" if !defined $opts->{name};
+
+        if (!defined $opts->{server}) {
+            die "Server for network '$opts->{name}' not specified\n";
+        }
+
+        while (my ($opt, $value) = each %{ $self->{cfg} }) {
+            $opts->{$opt} = $value if !defined $opts->{$opt};
+        }
+
+        $opts->{class} = 'POE::Component::IRC::State' if !defined $opts->{class};
+        eval "require $opts->{class}";
+        chomp $@;
+        die "Can't load class $opts->{class}: $@\n" if $@;
+    }
+
+    # this can not be done earlier due to a bug in Perl 5.12 which causes
+    # the compilation of Net::DNS (used by POE::Component::IRC) to clear
+    # the signal handler
+    $kernel->sig(INT => '_exit');
+
+    if ($self->{check_cfg}) {
+        print "Config file is valid all modules could be compiled.\n";
+        return;
+    }
+
+    $self->_status("Started");
 
     # construct global plugins
     $self->_status("Constructing global plugins");
@@ -84,30 +115,16 @@ sub _start {
     for my $opts (@{ $self->{cfg}{networks} }) {
         my $network = delete $opts->{name};
         my $class = delete $opts->{class};
-        die "Network name missing\n" if !defined $network;
-        
-        while (my ($opt, $value) = each %{ $self->{cfg} }) {
-            $opts->{$opt} = $value if !defined $opts->{$opt};
-        }
-
-        if (!defined $opts->{server}) {
-            die "Server for network '$network' not specified\n";
-        }
         
         # construct network-specific plugins
         $self->_status('Constructing local plugins', $network);
         $self->{local_plugs}{$network} = $self->_create_plugins(delete $opts->{local_plugins});
 
-        $class = 'POE::Component::IRC::State' if !defined $class;
-        eval "require $class";
-        chomp $@;
-        die "Can't load class $class: $@" if $@;
-
         $self->_status('Spawning IRC component', $network);
         my $irc = $class->spawn(%$opts);
-
         push @{ $self->{ircs} }, [$network, $irc];
     }
+
 
     for my $entry (@{ $self->{ircs} }) {
         my ($network, $irc) = @$entry;
@@ -134,11 +151,6 @@ sub _start {
 
     delete $self->{global_plugs};
     delete $self->{local_plugs};
-
-    # this can not be done earlier due to a bug in Perl 5.12 which causes
-    # the compilation of Net::DNS (used by POE::Component::IRC) to clear
-    # the signal handler
-    $kernel->sig(INT => '_exit');
 
     return;
 }
@@ -346,29 +358,39 @@ sub _irc_to_network {
     return;
 }
 
+# find out the canonical class name for the plugin and require() it
+sub _require_plugin {
+    my ($self, $plug_spec) = @_;
+
+    my ($class, $args) = @$plug_spec;
+    $args = {} if !defined $args;
+
+    my $fullclass = "POE::Component::IRC::Plugin::$class";
+    my $canonclass = $fullclass;
+    my $error;
+    eval "require $fullclass";
+    if ($@) {
+        $error .= $@;
+        eval "require $class";
+        if ($@) {
+            chomp $@;
+            $error .= $@;
+            die "Failed to load plugin $class or $fullclass: $error\n";
+        }
+        $canonclass = $class;
+    }
+
+    $plug_spec->[1] = $args;
+    $plug_spec->[2] = $canonclass;
+    return;
+}
+
 sub _create_plugins {
     my ($self, $plugins) = @_;
 
     my @return;
-    for my $plugin (@$plugins) {
-        my ($class, $args) = @$plugin;
-        $args = {} if !defined $args;
-
-        my $fullclass = "POE::Component::IRC::Plugin::$class";
-        my $canonclass = $fullclass;
-        my $error;
-        eval "require $fullclass";
-        if ($@) {
-            $error .= $@;
-            eval "require $class";
-            if ($@) {
-                chomp $@;
-                $error .= $@;
-                die "Failed to load plugin $class or $fullclass: $error\n";
-            }
-            $canonclass = $class;
-        }
-
+    for my $plug_spec (@$plugins) {
+        my ($class, $args, $canonclass) = @$plug_spec;
         my $obj = $canonclass->new(%$args);
         push @return, [$class, $obj];
     }

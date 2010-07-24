@@ -2,6 +2,7 @@ Revision history for POE-Quickie
 
 {{$NEXT}}
     - Shut down disconnected IRC components properly
+    - Rename "-c" option to "-f" and make "-c" validate the config file
 
 0.10  Mon Jun 28 21:39:05 GMT 2010
     - Print compilation errors if we fail to load a plugin
