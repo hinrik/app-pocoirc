@@ -14,24 +14,6 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    if (my $log = delete $self->{cfg}{log_file}) {
-        open my $fh, '>>', $log or die "Can't open $log: $!\n";
-        close $fh;
-        $self->{log_file} = $log;
-    }
-
-    if (!$self->{no_color}) {
-        require Term::ANSIColor;
-        Term::ANSIColor->import();
-    }
-
-    if ($self->{daemonize} && !$self->{check_cfg}) {
-        require Proc::Daemon;
-        eval { Proc::Daemon::Init->() };
-        chomp $@;
-        die "Can't daemonize: $@\n" if $@;
-    }
-
     POE::Session->create(
         object_states => [
             $self => [qw(
@@ -68,15 +50,11 @@ sub run {
 sub _start {
     my ($kernel, $session, $self) = @_[KERNEL, SESSION, OBJECT];
 
-    $kernel->sig(DIE => '_exception');
+    # misc things
+    $self->_global_setup();
 
-    if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
-        my $lib = delete $self->{cfg}{lib};
-        unshift @INC, @$lib;
-    }
-
+    # compilation and config validation
     $self->_require_plugin($_) for @{ $self->{cfg}{global_plugins} || [] };
-
     for my $opts (@{ $self->{cfg}{networks} }) {
         $self->_require_plugin($_) for @{ $opts->{local_plugins} || [] };
 
@@ -97,15 +75,25 @@ sub _start {
         die "Can't load class $opts->{class}: $@\n" if $@;
     }
 
-    # this can not be done earlier due to a bug in Perl 5.12 which causes
-    # the compilation of Net::DNS (used by POE::Component::IRC) to clear
-    # the signal handler
-    $kernel->sig(INT => '_exit');
-
     if ($self->{check_cfg}) {
         print "Config file is valid all modules could be compiled.\n";
         return;
     }
+
+    if ($self->{daemonize}) {
+        require Proc::Daemon;
+        eval { Proc::Daemon::Init->() };
+        chomp $@;
+        die "Can't daemonize: $@\n" if $@;
+    }
+
+    # all exceptions will now be colored & timestamped status messages
+    $kernel->sig(DIE => '_exception');
+
+    # this can not be done earlier due to a bug in Perl 5.12 which causes
+    # the compilation of Net::DNS (used by POE::Component::IRC) to clear
+    # the signal handler
+    $kernel->sig(INT => '_exit');
 
     $self->_status("Started");
 
@@ -153,6 +141,29 @@ sub _start {
 
     delete $self->{global_plugs};
     delete $self->{local_plugs};
+
+    return;
+}
+
+# a few things to take care of at start up
+sub _global_setup {
+    my ($self) = @_;
+
+    if (my $log = delete $self->{cfg}{log_file}) {
+        open my $fh, '>>', $log or die "Can't open $log: $!\n";
+        close $fh;
+        $self->{log_file} = $log;
+    }
+
+    if (!$self->{no_color}) {
+        require Term::ANSIColor;
+        Term::ANSIColor->import();
+    }
+
+    if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
+        my $lib = delete $self->{cfg}{lib};
+        unshift @INC, @$lib;
+    }
 
     return;
 }
