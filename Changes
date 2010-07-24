@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.12  Sat Jul 24 21:34:01 GMT 2010
     - Exit after --version
     - Only daemonize after we've done more sanity checks
 
