@@ -33,6 +33,7 @@ GetOptions(
             ? $App::Pocoirc::VERSION
             : 'dev-git';
         print "Version $version\n";
+        exit;
     },
 ) or pod2usage();
 
