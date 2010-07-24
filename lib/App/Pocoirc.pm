@@ -135,6 +135,9 @@ sub _start {
     delete $self->{global_plugs};
     delete $self->{local_plugs};
 
+    # this can not be done earlier due to a bug in Perl 5.12 which causes
+    # the compilation of Net::DNS (used by POE::Component::IRC) to clear
+    # the signal handler
     $kernel->sig(INT => '_exit');
 
     return;
