@@ -154,11 +154,11 @@ B<pocoirc> <options>
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
-   -I FOO, --lib FOO            A Perl library directory of plugins
+   -I FOO, --lib FOO            A Perl library directory to include
    -l, --log-file               Write status messages to this log file
 
- PLUGIN mentioned above should consist of the plugin class name, zero or
- more  whitespace, and possibly a JSON hash of arguments to the plugin's
+ PLUGIN mentioned above should consist of the short class name, zero or
+ more whitespace, and possibly a JSON hash of arguments to the plugin's
  constructor:
 
   -p AutoJoin
