@@ -7,15 +7,20 @@ use Pod::Usage;
 
 my %args;
 GetOptions(
+    # program options
     'c|check'      => \$args{check_cfg},
     'f|config=s'   => \$args{cfg_file},
     'v|verbose'    => \$args{verbose},
     'd|daemonize'  => \$args{daemonize},
     'N|no-color'   => \$args{no_color},
-    '6|ipv6'       => \$args{ipv6},
-    'S|ssl'        => \$args{ssl},
+
+    # global config options
     'I|lib=s@'     => \$args{lib},
     'l|log-file=s' => \$args{log_file},
+
+    # network-specific config options
+    '6|ipv6'       => \$args{ipv6},
+    'S|ssl'        => \$args{ssl},
     'C|class=s'    => \$args{class},
     's|server=s'   => \$args{server},
     'n|nick=s'     => \$args{nick},

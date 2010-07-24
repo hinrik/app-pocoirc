@@ -14,10 +14,10 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    if (defined $self->{cfg}{log_file}) {
-        open my $fh, '>>', $self->{cfg}{log_file}
-            or die "Can't open $self->{cfg}{log_file}: $!\n";
+    if (my $log = delete $self->{cfg}{log_file}) {
+        open my $fh, '>>', $log or die "Can't open $log: $!\n";
         close $fh;
+        $self->{log_file} = $log;
     }
 
     if (!$self->{no_color}) {
@@ -71,7 +71,8 @@ sub _start {
     $kernel->sig(DIE => '_exception');
 
     if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
-        unshift @INC, @{ $self->{cfg}{lib} };
+        my $lib = delete $self->{cfg}{lib};
+        unshift @INC, @$lib;
     }
 
     $self->_require_plugin($_) for @{ $self->{cfg}{global_plugins} || [] };
@@ -86,6 +87,7 @@ sub _start {
         }
 
         while (my ($opt, $value) = each %{ $self->{cfg} }) {
+            next if $opt =~ /^(?:networks|global_plugins|local_plugins)$/;
             $opts->{$opt} = $value if !defined $opts->{$opt};
         }
 
@@ -333,10 +335,10 @@ sub _status {
         }
     }
 
-    if (defined $self->{cfg}{log_file}) {
+    if (defined $self->{log_file}) {
         my $fh;
-        if (!open($fh, '>>:encoding(utf8)', $self->{cfg}{log_file}) && !$self->{daemonize}) {
-            warn "Can't open $self->{cfg}{log_file}: $!\n";
+        if (!open($fh, '>>:encoding(utf8)', $self->{log_file}) && !$self->{daemonize}) {
+            warn "Can't open $self->{log_file}: $!\n";
         }
 
         $fh->autoflush(1);
