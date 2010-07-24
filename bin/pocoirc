@@ -5,16 +5,6 @@ use warnings;
 use Getopt::Long qw(:config autohelp no_ignore_case);
 use Pod::Usage;
 
-my $procname = 'pocoirc';
-$0 = $procname;
-if ($] < 5.013000 && $^O eq 'linux') {
-    local $@;
-    eval {
-        require Sys::Prctl;
-        Sys::Prctl::prctl_name($procname);
-    };
-}
-
 my %args;
 GetOptions(
     'c|config=s'   => \$args{cfg_file},
@@ -39,6 +29,16 @@ GetOptions(
         print "Version $version\n";
     },
 ) or pod2usage();
+
+my $procname = 'pocoirc';
+$0 = $procname;
+if ($] < 5.013000 && $^O eq 'linux') {
+    local $@;
+    eval {
+        require Sys::Prctl;
+        Sys::Prctl::prctl_name($procname);
+    };
+}
 
 my $config;
 if (defined $args{cfg_file}) {
