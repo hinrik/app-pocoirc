@@ -433,9 +433,9 @@ sub _shutdown {
     if (!$self->{shutdown}) {
         for my $irc (@{ $self->{ircs} }) {
             my ($network, $obj) = @$irc;
-            $obj->connected
+            $obj->logged_in
                 ? $obj->yield(quit => $reason)
-                : $obj->yield('shutdown');
+                : $obj->yield(shutdown => $reason);
         }
         $self->{shutdown} = 1;
     }
