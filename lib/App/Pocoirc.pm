@@ -32,8 +32,8 @@ sub run {
         object_states => [
             $self => [qw(
                 _start
-                _exception
-                _exit
+                sig_die
+                sig_int
                 irc_connected
                 irc_disconnected
                 irc_snotice
@@ -108,8 +108,8 @@ sub _setup {
 sub _start {
     my ($kernel, $session, $self) = @_[KERNEL, SESSION, OBJECT];
 
-    $kernel->sig(DIE => '_exception');
-    $kernel->sig(INT => '_exit');
+    $kernel->sig(DIE => 'sig_die');
+    $kernel->sig(INT => 'sig_int');
     $self->_status("Started");
 
     # construct global plugins
@@ -403,7 +403,7 @@ sub _create_plugins {
     return \@return;
 }
 
-sub _exception {
+sub sig_die {
     my ($kernel, $self, $ex) = @_[KERNEL, OBJECT, ARG1];
     chomp $ex->{error_str};
 
@@ -418,7 +418,7 @@ sub _exception {
     return;
 }
 
-sub _exit {
+sub sig_int {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
     $self->_status('Caught interrupt signal, exiting...');
