@@ -505,9 +505,9 @@ C<log_file> is the path to a log to which status messages will be written.
 
 =head2 Networks
 
-The C<network> option should be an array of network hashes. A network hash
+The C<networks> option should be an array of network hashes. A network hash
 consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.
-Only C<name> (and C<server> if not defined the top level) is required.
+Only C<name> (and C<server> if not defined at the top level) is required.
 The POE::Component::IRC parameters specified in this hash will override the
 ones specified at the top level.
 
