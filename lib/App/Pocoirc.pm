@@ -17,7 +17,7 @@ sub run {
     $self->_setup();
 
     if ($self->{check_cfg}) {
-        print "Config file is valid all modules could be compiled.\n";
+        print "Config file is valid and all modules could be compiled.\n";
         return;
     }
 
