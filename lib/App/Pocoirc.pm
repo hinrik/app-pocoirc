@@ -81,7 +81,10 @@ sub _setup {
         unshift @INC, @$lib;
     }
 
-    $self->_require_plugin($_) for @{ $self->{cfg}{global_plugins} || [] };
+    for my $plug_spec (@{ $self->{cfg}{global_plugins} || [] }) {
+        $self->_require_plugin($plug_spec);
+    }
+
     for my $opts (@{ $self->{cfg}{networks} }) {
         die "Network name missing\n" if !defined $opts->{name};
 
@@ -90,7 +93,9 @@ sub _setup {
             $opts->{$opt} = $value if !defined $opts->{$opt};
         }
 
-        $self->_require_plugin($_) for @{ $opts->{local_plugins} || [] };
+        for my $plug_spec (@{ $opts->{local_plugins} || [] }) {
+            $self->_require_plugin($plug_spec);
+        }
 
         if (!defined $opts->{server}) {
             die "Server for network '$opts->{name}' not specified\n";
