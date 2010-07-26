@@ -367,6 +367,7 @@ sub _irc_to_network {
 sub _require_plugin {
     my ($self, $plug_spec) = @_;
 
+    return if defined $plug_spec->[2];
     my ($class, $args) = @$plug_spec;
     $args = {} if !defined $args;
 
