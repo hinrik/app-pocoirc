@@ -1,6 +1,8 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+
+0.13  Mon Jul 26 03:54:30 GMT 2010
     - Shutdown properly when connected to a server which we've failed to log
       into. Depend on POE::Component::IRC 6.36 for this.
     - Allow a default server again
