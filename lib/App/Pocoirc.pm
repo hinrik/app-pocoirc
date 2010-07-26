@@ -80,19 +80,20 @@ sub _setup {
         my $lib = delete $self->{cfg}{lib};
         unshift @INC, @$lib;
     }
+
     $self->_require_plugin($_) for @{ $self->{cfg}{global_plugins} || [] };
     for my $opts (@{ $self->{cfg}{networks} }) {
-        $self->_require_plugin($_) for @{ $opts->{local_plugins} || [] };
-
         die "Network name missing\n" if !defined $opts->{name};
-
-        if (!defined $opts->{server}) {
-            die "Server for network '$opts->{name}' not specified\n";
-        }
 
         while (my ($opt, $value) = each %{ $self->{cfg} }) {
             next if $opt =~ /^(?:networks|global_plugins|local_plugins)$/;
             $opts->{$opt} = $value if !defined $opts->{$opt};
+        }
+
+        $self->_require_plugin($_) for @{ $opts->{local_plugins} || [] };
+
+        if (!defined $opts->{server}) {
+            die "Server for network '$opts->{name}' not specified\n";
         }
 
         $opts->{class} = 'POE::Component::IRC::State' if !defined $opts->{class};
