@@ -4,6 +4,7 @@ Revision history for POE-Quickie
     - Enable USE_SIGCHLD in POE for instant child process reaping. Might make
       a difference with bots that use a lot of fork()ing plugins.
     - Fix a bug which caused -V/--version to not print the version
+    - Color plugin errors red like other errors
 
 0.13  Mon Jul 26 03:54:30 GMT 2010
     - Shutdown properly when connected to a server which we've failed to log

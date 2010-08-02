@@ -317,7 +317,7 @@ sub irc_plugin_del {
 sub irc_plugin_error {
     my ($self, $error) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status($error, $irc);
+    $self->_status($error, $irc, 1);
     return;
 }
 
