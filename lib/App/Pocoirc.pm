@@ -2,6 +2,10 @@ package App::Pocoirc;
 
 use strict;
 use warnings;
+
+# we want instant child process reaping
+sub POE::Kernel::USE_SIGCHLD () { return 1 }
+
 use IO::Handle;
 use POE;
 use POSIX 'strftime';
