@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use App::Pocoirc;
 use Getopt::Long qw(:config autohelp no_ignore_case);
 use Pod::Usage;
 
@@ -123,7 +124,6 @@ else {
     };
 }
 
-require App::Pocoirc;
 App::Pocoirc->new(
     cfg       => $config,
     (map {
