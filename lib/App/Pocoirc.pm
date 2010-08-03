@@ -38,6 +38,7 @@ sub run {
                 _start
                 sig_die
                 sig_int
+                sig_term
                 irc_connected
                 irc_disconnected
                 irc_snotice
@@ -120,6 +121,7 @@ sub _start {
 
     $kernel->sig(DIE => 'sig_die');
     $kernel->sig(INT => 'sig_int');
+    $kernel->sig(TERM => 'sig_term');
     $self->_status("Started");
 
     # construct global plugins
@@ -424,7 +426,7 @@ sub sig_die {
     );
 
     $self->_status($_, undef, 1) for @errors;
-    $self->_shutdown('Caught exception');
+    $self->_shutdown('Caught exception, exiting...');
     $kernel->sig_handled();
     return;
 }
@@ -432,8 +434,17 @@ sub sig_die {
 sub sig_int {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
-    $self->_status('Caught interrupt signal, exiting...');
-    $self->_shutdown('Caught interrupt');
+    $self->_status('Caught SIGINT, exiting...');
+    $self->_shutdown('Caught SIGINT, exiting...');
+    $kernel->sig_handled();
+    return;
+}
+
+sub sig_term {
+    my ($kernel, $self) = @_[KERNEL, OBJECT];
+
+    $self->_status('Caught SIGTERM, exiting...');
+    $self->_shutdown('Caught SIGTERM, exiting...');
     $kernel->sig_handled();
     return;
 }

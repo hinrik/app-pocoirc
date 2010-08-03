@@ -1,6 +1,7 @@
 Revision history for POE-Quickie
 
 {{$NEXT}}
+    - Terminate gracefully when we get SIGTERM
 
 0.14  Mon Aug 2 07:46:04 GMT 2010
     - Enable USE_SIGCHLD in POE for instant child process reaping. Might make
