@@ -1,7 +1,7 @@
 package App::Pocoirc;
 
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 
 # we want instant child process reaping
 sub POE::Kernel::USE_SIGCHLD () { return 1 }
