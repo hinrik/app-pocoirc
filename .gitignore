@@ -1,6 +1,2 @@
-Makefile
-Makefile.old
 App-Pocoirc-*
-blib
-pm_to_blib
 cover_db
