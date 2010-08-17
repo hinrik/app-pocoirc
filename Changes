@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.15  Tue Aug 17 22:33:32 GMT 2010
     - Terminate gracefully when we get SIGTERM
     - Make all warnings fatal
 
