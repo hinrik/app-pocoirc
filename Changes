@@ -1,4 +1,4 @@
-Revision history for POE-Quickie
+Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Terminate gracefully when we get SIGTERM
