@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Add a -j/--join option to join channels with the AutoJoin plugin
 
 0.15  Tue Aug 17 22:33:32 GMT 2010
     - Terminate gracefully when we get SIGTERM

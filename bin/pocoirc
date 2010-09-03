@@ -27,6 +27,7 @@ GetOptions(
     'n|nick=s'     => \$args{nick},
     'u|username=s' => \$args{username},
     'i|ircname=s'  => \$args{ircname},
+    'j|join=s@'    => \$args{chan_specs},
     'p|plugin=s@'  => \$args{plugin_specs},
     'V|version'    => sub {
         no strict 'vars';
@@ -110,6 +111,16 @@ else {
         }
     }
 
+    # process -j arguments
+    if ($args{chan_specs}) {
+        my %chans;
+        for my $chanspec (@{ $args{chan_specs} }) {
+            my ($chan, $pass) = split /:/, $chanspec, 2;
+            $chans{$chan} = $pass;
+        }
+        push @plugins, ['AutoJoin', { Channels => \%chans }];
+    }
+
     $config = {
         (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file)),
         networks => [
@@ -156,12 +167,18 @@ B<pocoirc> <options>
    -n FOO, --nickname FOO       Use nickname FOO
    -u FOO, --username FOO       Use username FOO
    -i FOO, --ircname FOO        Use ircname FOO
+   -j CHANNEL --join CHANNEL    Join a channel (see below)
    -p PLUGIN, --plugin PLUGIN   Load plugin PLUGIN (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
    -l, --log-file               Write status messages to this log file
+
+ CHANNEL mentioned above can be a channel name (e.g. '#foo') or a channel
+ name and a password separated by a colon (e.g. '#foo:bar'). If you specify
+ any channels, an AutoJoin plugin with these parameters will be added to
+ your IRC component.
 
  PLUGIN mentioned above should consist of the short class name, zero or
  more whitespace, and possibly a JSON hash of arguments to the plugin's
