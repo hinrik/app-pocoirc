@@ -108,7 +108,7 @@ sub _start {
     $kernel->sig(DIE => 'sig_die');
     $kernel->sig(INT => 'sig_int');
     $kernel->sig(TERM => 'sig_term');
-    $self->_status("Started");
+    $self->_status("Started (pid $$)");
 
     # construct global plugins
     $self->_status("Constructing global plugins");
