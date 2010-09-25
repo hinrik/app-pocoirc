@@ -5,6 +5,7 @@ Revision history for App-Pocoirc
     - Add -p/--password for specifying a server password
     - Add -N/--nspassword to specify a NickServ password
     - Add -a/--arg to specify arbitrary arguments to POE::Component::IRC
+    - Log when we identify with NickServ
 
 0.16  Sat Sep 4 02:18:19 UTC 2010
     - Add a -j/--join option to join channels with the AutoJoin plugin
