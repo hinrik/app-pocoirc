@@ -20,16 +20,19 @@ GetOptions(
     'l|log-file=s' => \$args{log_file},
 
     # network-specific config options
-    '6|ipv6'       => \$args{ipv6},
-    'S|ssl'        => \$args{ssl},
-    'C|class=s'    => \$args{class},
-    's|server=s'   => \$args{server},
-    'n|nick=s'     => \$args{nick},
-    'u|username=s' => \$args{username},
-    'i|ircname=s'  => \$args{ircname},
-    'j|join=s@'    => \$args{chan_specs},
-    'p|plugin=s@'  => \$args{plugin_specs},
-    'V|version'    => sub {
+    '6|ipv6'         => \$args{ipv6},
+    'S|ssl'          => \$args{ssl},
+    'C|class=s'      => \$args{class},
+    's|server=s'     => \$args{server},
+    'p|password=s'   => \$args{password},
+    'n|nick=s'       => \$args{nick},
+    'u|username=s'   => \$args{username},
+    'i|ircname=s'    => \$args{ircname},
+    'j|join=s@'      => \$args{chan_specs},
+    'N|nspassword=s' => \$args{nspassword},
+    'P|plugin=s@'    => \$args{plugin_specs},
+    'a|arg=s@'       => \$args{args},
+    'V|version'      => sub {
         no strict 'vars';
         my $version = defined $App::Pocoirc::VERSION
             ? $App::Pocoirc::VERSION
@@ -111,7 +114,7 @@ else {
         }
     }
 
-    # process -j arguments
+    # process -j options
     if ($args{chan_specs}) {
         my %chans;
         for my $chanspec (@{ $args{chan_specs} }) {
@@ -121,15 +124,33 @@ else {
         push @plugins, ['AutoJoin', { Channels => \%chans }];
     }
 
+    # process -N option
+    if (defined $args{nspassword}) {
+        push @plugins, ['NickServID', { Password => $args{nspassword}} ],
+    }
+
+    # process -a options
+    my %direct_args;
+    if ($args{args}) {
+        for my $arg (@{ $args{args} }) {
+            my ($key, $val) = split /:/, $arg, 2;
+            if (!defined $key || !defined $val) {
+                die "Invalid argument to -a or --arg: $arg\n";
+            }
+            $direct_args{$key} = $val;
+        }
+    }
+
     $config = {
         (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file)),
         networks => [
             {
                 name => 'default',
                 local_plugins => \@plugins,
+                %direct_args,
                 (map {
                     defined $args{$_} ? ($_ => $args{$_}) : ()
-                } qw(class server nick username ircname ipv6 ssl)),
+                } qw(class server password nick username ircname ipv6 ssl)),
             }
         ],
     };
@@ -164,30 +185,36 @@ B<pocoirc> <options>
 
  When not using a config file, you can use these:
    -s FOO, --server FOO         Connect to server FOO
+   -p FOO, --password FOO       Use server password FOO
    -n FOO, --nickname FOO       Use nickname FOO
    -u FOO, --username FOO       Use username FOO
    -i FOO, --ircname FOO        Use ircname FOO
-   -j CHANNEL --join CHANNEL    Join a channel (see below)
-   -p PLUGIN, --plugin PLUGIN   Load plugin PLUGIN (see below)
+   -j FOO --join FOO            Join channel FOO (see below)
+   -N FOO, --nspassword FOO     NickServ password (see below)
+   -P FOO, --plugin FOO         Load plugin FOO (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
+   -a FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
    -l, --log-file               Write status messages to this log file
 
- CHANNEL mentioned above can be a channel name (e.g. '#foo') or a channel
+ Arguments to the -j option can be a channel name (e.g. '#foo') or a channel
  name and a password separated by a colon (e.g. '#foo:bar'). If you specify
  any channels, an AutoJoin plugin with these parameters will be added to
  your IRC component.
 
- PLUGIN mentioned above should consist of the short class name, zero or
+ When you use the -N option, a NickServID plugin will be added for you with
+ the supplied password.
+
+ Arguments to the -P option should consist of the short class name, zero or
  more whitespace, and possibly a JSON hash of arguments to the plugin's
  constructor:
 
-  -p AutoJoin
-  -p 'AutoJoin{"ReJoinOnKick":0}'
-  -p 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
-  -p 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
+  -P AutoJoin
+  -P 'AutoJoin{"ReJoinOnKick":0}'
+  -P 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
+  -P 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
 
  For documentation on the configuration file, do "perldoc App::Pocoirc"
 
