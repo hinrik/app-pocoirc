@@ -8,6 +8,6 @@ use_ok('App::Pocoirc::Status');
 use_ok('App::Pocoirc');
 
 SKIP: {
-    skip "There's no blib", 1 unless -d "blib" and -f catfile qw(blib script hailo);
+    skip "There's no blib", 1 unless -d "blib" and -f catfile qw(blib script pocoirc);
     script_compiles(catfile('bin', 'pocoirc'));
 };

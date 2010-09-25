@@ -2,6 +2,7 @@ Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Add -t/--trace option to trace events
+    - Fix compilation test for the pocoirc script
 
 0.17  Sat Sep 25 09:42:36 UTC 2010
     - Move -p/--plugin to -P/--plugin
