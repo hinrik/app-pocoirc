@@ -12,6 +12,7 @@ GetOptions(
     'c|check'      => \$args{check_cfg},
     'f|config=s'   => \$args{cfg_file},
     'v|verbose'    => \$args{verbose},
+    't|trace'      => \$args{trace},
     'd|daemonize'  => \$args{daemonize},
     'N|no-color'   => \$args{no_color},
 
@@ -160,7 +161,7 @@ App::Pocoirc->new(
     cfg       => $config,
     (map {
         defined $args{$_} ? ($_ => $args{$_}) : ()
-    } qw(check_cfg daemonize verbose no_color))
+    } qw(check_cfg daemonize verbose trace no_color))
 )->run();
 
 =encoding utf8
@@ -179,6 +180,7 @@ B<pocoirc> <options>
    -f FOO, --config FOO         Use config file FOO
    -d, --daemonize              Run in the background
    -v, --verbose                Show IRC protocol messages
+   -t, --trace                  Show all IRC events
    -N, --no-color               Don't use terminal colors
    -V, --version                Print version
    -h, --help                   Print this usage message

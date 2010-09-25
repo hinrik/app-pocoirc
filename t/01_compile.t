@@ -1,9 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 use File::Spec::Functions 'catfile';
-use Test::More tests => 2;
+use Test::More tests => 3;
 use Test::Script;
 
+use_ok('App::Pocoirc::Status');
 use_ok('App::Pocoirc');
 
 SKIP: {

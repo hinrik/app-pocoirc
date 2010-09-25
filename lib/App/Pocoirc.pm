@@ -6,6 +6,7 @@ use warnings FATAL => 'all';
 # we want instant child process reaping
 sub POE::Kernel::USE_SIGCHLD () { return 1 }
 
+use App::Pocoirc::Status;
 use IO::Handle;
 use POE;
 use POSIX 'strftime';
@@ -39,26 +40,10 @@ sub run {
                 sig_die
                 sig_int
                 sig_term
-                irc_connected
-                irc_disconnected
-                irc_snotice
-                irc_notice
-                irc_001
-                irc_identified
-                irc_quit
-                irc_nick
-                irc_join
-                irc_part
-                irc_kick
-                irc_error
-                irc_socketerr
-                irc_shutdown
-                irc_socks_failed
-                irc_socks_rejected
                 irc_plugin_add
                 irc_plugin_del
                 irc_plugin_error
-                irc_raw
+                irc_disconnected
             )],
         ],
     );
@@ -129,6 +114,12 @@ sub _start {
     $self->_status("Constructing global plugins");
     $self->{global_plugs} = $self->_create_plugins(delete $self->{cfg}{global_plugins});
 
+    my $status_plugin = App::Pocoirc::Status->new(
+        Pocoirc => $self,
+        Trace   => $self->{trace},
+        Verbose => $self->{verbose},
+    );
+
     # construct IRC components
     for my $opts (@{ $self->{cfg}{networks} }) {
         my $network = delete $opts->{name};
@@ -146,10 +137,6 @@ sub _start {
 
     for my $entry (@{ $self->{ircs} }) {
         my ($network, $irc) = @$entry;
-        
-        $irc->raw_events(1) if $self->{verbose};
-        
-        # add the plugins
         $self->_status('Registering plugins', $network);
 
         my @plugins = (
@@ -163,6 +150,11 @@ sub _start {
             $irc->plugin_add($name, $object);
         }
 
+        # add our status plugin and bump it to the front of the pipeline
+        $irc->plugin_add('PocoircStatus'.$session->ID(), $status_plugin);
+        my $idx = $irc->pipeline->get_index($status_plugin);
+        $irc->pipeline->bump_up($status_plugin, $idx);
+
         $self->_status('Connecting to IRC', $network);
         $irc->yield('connect');
     }
@@ -173,147 +165,12 @@ sub _start {
     return;
 }
 
-sub irc_connected {
-    my ($self, $address) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Connected to server $address", $irc);
-    return;
-}
-
-sub irc_disconnected {
-    my ($self, $server) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Disconnected from server $server", $irc);
-
-    $irc->yield('shutdown') if $self->{shutdown};
-    return;
-}
-
-sub irc_snotice {
-    my ($self, $notice) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Server notice: $notice", $irc);
-    return;
-}
-
-sub irc_notice {
-    my ($self, $sender, $notice) = @_[OBJECT, ARG0, ARG2];
-    my $irc = $_[SENDER]->get_heap();
-
-    if (defined $irc->server_name() && $sender ne $irc->server_name()) {
-        return;
-    }
-
-    $self->_status("Server notice: $notice", $irc);
-    return;
-}
-
-sub irc_001 {
-    my ($self, $server) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    my $nick = $irc->nick_name();
-    $self->_status("Logged in to server $server with nick $nick", $irc);
-    return;
-}
-
-sub irc_identified {
-    my ($self) = $_[OBJECT];
-    my $irc = $_[SENDER]->get_heap();
-    my $nick = $irc->nick_name();
-    $self->_status("Identified with NickServ as $nick", $irc);
-    return;
-}
-
-sub irc_nick {
-    my ($self, $user, $newnick) = @_[OBJECT, ARG0, ARG1];
-    my $oldnick = (split /!/, $user)[0];
-    my $irc = $_[SENDER]->get_heap();
-    return if $newnick ne $irc->nick_name();
-    $self->_status("Nickname changed from $oldnick to $newnick", $irc);
-    return;
-}
-
-sub irc_join {
-    my ($self, $user, $chan) = @_[OBJECT, ARG0, ARG1];
-    my $nick = (split /!/, $user)[0];
-    my $irc = $_[SENDER]->get_heap();
-    return if $nick ne $irc->nick_name();
-    $self->_status("Joined channel $chan", $irc);
-    return;
-}
-
-sub irc_part {
-    my ($self, $user, $chan, $reason) = @_[OBJECT, ARG0..ARG2];
-    my $nick = (split /!/, $user)[0];
-    my $irc = $_[SENDER]->get_heap();
-    return if $nick ne $irc->nick_name();
-    my $msg = "Parted channel $chan";
-    $msg .= " ($reason)" if defined $reason;
-    $self->_status($msg, $irc);
-    return;
-}
-
-sub irc_kick {
-    my ($self, $kicker, $chan, $victim, $reason) = @_[OBJECT, ARG0..ARG3];
-    $kicker = (split /!/, $kicker)[0];
-    my $irc = $_[SENDER]->get_heap();
-    return if $victim ne $irc->nick_name();
-    my $msg = "Kicked from $chan by $kicker";
-    $msg .= " ($reason)" if length $reason;
-    $self->_status($msg, $irc);
-    return;
-}
-
-sub irc_error {
-    my ($self, $error) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Error from IRC server: $error", $irc);
-    return;
-}
-
-sub irc_quit {
-    my ($self, $user, $reason) = @_[OBJECT, ARG0, ARG1];
-    my $irc = $_[SENDER]->get_heap();
-
-    my $nick = (split /!/, $user)[0];
-    return if $nick ne $irc->nick_name();
-    my $msg = 'Quit from IRC';
-    $msg .= " ($reason)" if length $reason;
-    $self->_status($msg, $irc);
-    return;
-}
-
-sub irc_shutdown {
-    my ($self) = $_[OBJECT];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Shutting down", $irc);
-    return;
-}
-
-sub irc_socketerr {
-    my ($self, $reason) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Failed to connect to server: $reason", $irc);
-    return;
-}
-
-sub irc_socks_failed {
-    my ($self, $reason) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Failed to connect to SOCKS server: $reason", $irc);
-    return;
-}
-
-sub irc_socks_rejected {
-    my ($self, $code) = @_[OBJECT, ARG0];
-    my $irc = $_[SENDER]->get_heap();
-    $self->_status("Connection rejected by SOCKS server (code $code)", $irc);
-    return;
-}
-
+# we handle plugin status messages here because the status plugin won't
+# see these for previously added plugins or plugin_del for itself, etc
 sub irc_plugin_add {
     my ($self, $alias) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
+    $self->_status("EVENT S_plugin_add", $irc, 'debug') if $self->{trace};
     $self->_status("Added plugin $alias", $irc);
     return;
 }
@@ -321,6 +178,7 @@ sub irc_plugin_add {
 sub irc_plugin_del {
     my ($self, $alias) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
+    $self->_status("EVENT S_plugin_del", $irc, 'debug') if $self->{trace};
     $self->_status("Deleted plugin $alias", $irc);
     return;
 }
@@ -328,20 +186,20 @@ sub irc_plugin_del {
 sub irc_plugin_error {
     my ($self, $error) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status($error, $irc, 1);
+    $self->_status("EVENT S_plugin_error", $irc, 'debug') if $self->{trace};
+    $self->_status($error, $irc, 'error');
     return;
 }
 
-sub irc_raw {
-    my ($self, $raw) = @_[OBJECT, ARG0];
-    return if !$self->{verbose};
+sub irc_disconnected {
+    my ($self, $server) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status("->$raw", $irc);
+    $irc->yield('shutdown') if $self->{shutdown};
     return;
 }
 
 sub _status {
-    my ($self, $message, $context, $error) = @_;
+    my ($self, $message, $context, $type) = @_;
 
     my $stamp = strftime('%Y-%m-%d %H:%M:%S', localtime);
     my $irc; eval { $irc = $context->isa('POE::Component::IRC') };
@@ -351,8 +209,11 @@ sub _status {
     $message = "$stamp$context $message";
 
     if (!$self->{daemonize}) {
-        if ($error) {
+        if (defined $type && $type eq 'error') {
             print colored($message, 'red'), "\n";
+        }
+        elsif (defined $type && $type eq 'debug') {
+            print colored($message, 'yellow'), "\n";
         }
         else {
             print colored($message, 'green'), "\n";
@@ -434,7 +295,7 @@ sub sig_die {
         "    $ex->{error_str}",
     );
 
-    $self->_status($_, undef, 1) for @errors;
+    $self->_status($_, undef, 'error') for @errors;
     $self->_shutdown('Caught exception, exiting...');
     $kernel->sig_handled();
     return;
