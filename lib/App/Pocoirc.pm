@@ -40,6 +40,7 @@ sub run {
                 sig_die
                 sig_int
                 sig_term
+                quit_timeout
                 irc_plugin_add
                 irc_plugin_del
                 irc_plugin_error
@@ -192,9 +193,13 @@ sub irc_plugin_error {
 }
 
 sub irc_disconnected {
-    my ($self, $server) = @_[OBJECT, ARG0];
+    my ($kernel, $self, $server) = @_[KERNEL, OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
+
     $irc->yield('shutdown') if $self->{shutdown};
+    my $network = $self->_irc_to_network($irc);
+    delete $self->{waiting}{$network};
+    $kernel->delay('quit_timeout') if !keys %{ $self->{waiting} };
     return;
 }
 
@@ -296,7 +301,11 @@ sub sig_die {
     );
 
     $self->_status($_, undef, 'error') for @errors;
-    $self->_shutdown('Caught exception, exiting...');
+
+    if (!$self->{shutdown}) {
+        $self->_shutdown('Exiting due to an exception');
+    }
+
     $kernel->sig_handled();
     return;
 }
@@ -304,8 +313,10 @@ sub sig_die {
 sub sig_int {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
-    $self->_status('Caught SIGINT, exiting...');
-    $self->_shutdown('Caught SIGINT, exiting...');
+    if (!$self->{shutdown}) {
+        $self->_status('Exiting due to SIGINT');
+        $self->_shutdown('Exiting due to SIGINT');
+    }
     $kernel->sig_handled();
     return;
 }
@@ -313,8 +324,11 @@ sub sig_int {
 sub sig_term {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
-    $self->_status('Caught SIGTERM, exiting...');
-    $self->_shutdown('Caught SIGTERM, exiting...');
+    if (!$self->{shutdown}) {
+        $self->_status('Exiting due to SIGTERM');
+        $self->_shutdown('Exiting due to SIGTERM');
+    }
+
     $kernel->sig_handled();
     return;
 }
@@ -322,16 +336,32 @@ sub sig_term {
 sub _shutdown {
     my ($self, $reason) = @_;
 
-    if (!$self->{shutdown}) {
-        for my $irc (@{ $self->{ircs} }) {
-            my ($network, $obj) = @$irc;
-            $obj->logged_in
-                ? $obj->yield(quit => $reason)
-                : $obj->yield(shutdown => $reason);
-        }
-        $self->{shutdown} = 1;
-    }
+    for my $irc (@{ $self->{ircs} }) {
+        my ($network, $obj) = @$irc;
 
+        if ($obj->logged_in()) {
+            if (!keys %{ $self->{waiting} }) {
+                $self->_status('Waiting up to 5 seconds for IRC server(s) to disconnect us');
+                $poe_kernel->delay('quit_timeout', 5);
+            }
+            $self->{waiting}{$network} = $obj;
+            $obj->yield(quit => $reason);
+        }
+        elsif ($obj->connected()) {
+            $obj->disconnect();
+        }
+        else {
+            $obj->yield('shutdown');
+        }
+    }
+    $self->{shutdown} = 1;
+
+    return;
+}
+
+sub quit_timeout {
+    my ($self) = $_[OBJECT];
+    $_->yield('shutdown') for values %{ $self->{waiting} };
     return;
 }
 

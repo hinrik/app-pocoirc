@@ -1,6 +1,11 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - On shutdown, wait up to 5 seconds for IRC servers to disconnect after
+      we quit
+    - On shutdown, forcefully disconnect from servers to which we are
+      connected but not logged in
+    - Don't log more than one "Exiting" message after shutdown is initiated
 
 0.18  Sat Sep 25 21:31:33 GMT 2010
     - Add -t/--trace option to trace events
