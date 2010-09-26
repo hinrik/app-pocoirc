@@ -169,8 +169,7 @@ App::Pocoirc->new(
 
 =head1 NAME
 
-pocoirc - A command line tool for launching
-L<POE::Component::IRC|POE::Component::IRC> clients
+pocoirc - A command line tool for launching L<POE::Component::IRC|POE::Component::IRC> clients
 
 =head1 SYNOPSIS
 

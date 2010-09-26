@@ -382,7 +382,7 @@ sub quit_timeout {
 
 =head1 NAME
 
-App::Pocoirc - The guts of L<pocoirc>
+App::Pocoirc - A command line tool for launching L<POE::Component::IRC|POE::Component::IRC> clients
 
 =head1 DESCRIPTION
 
