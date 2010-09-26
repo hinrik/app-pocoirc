@@ -155,7 +155,10 @@ sub _start {
         $irc->plugin_add('PocoircStatus'.$session->ID(), $status_plugin);
         my $idx = $irc->pipeline->get_index($status_plugin);
         $irc->pipeline->bump_up($status_plugin, $idx);
+    }
 
+    for my $entry (@{ $self->{ircs} }) {
+        my ($network, $irc) = @$entry;
         $self->_status('Connecting to IRC', $network);
         $irc->yield('connect');
     }
