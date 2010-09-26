@@ -211,7 +211,7 @@ B<pocoirc> <options>
  When you use the -N option, a NickServID plugin will be added for you with
  the supplied password.
 
- Arguments to the -P option should consist of the short class name, zero or
+ Arguments to the -L option should consist of the short class name, zero or
  more whitespace, and possibly a JSON hash of arguments to the plugin's
  constructor:
 

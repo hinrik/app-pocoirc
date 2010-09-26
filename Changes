@@ -6,6 +6,7 @@ Revision history for App-Pocoirc
     - On shutdown, forcefully disconnect from servers to which we are
       connected but not logged in
     - Don't log more than one "Exiting" message after shutdown is initiated
+    - Fixed a small error in the usage message
 
 0.18  Sat Sep 25 21:31:33 GMT 2010
     - Add -t/--trace option to trace events
