@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.20  Sun Sep 26 03:49:11 GMT 2010
     - Depend on POE::Component::Client::DNS and use the same resolver object
       for all IRC components
 
