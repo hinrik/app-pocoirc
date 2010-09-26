@@ -125,7 +125,7 @@ sub _start {
     for my $opts (@{ $self->{cfg}{networks} }) {
         my $network = delete $opts->{name};
         my $class = delete $opts->{class};
-        
+
         # construct network-specific plugins
         $self->_status('Constructing local plugins', $network);
         $self->{local_plugs}{$network} = $self->_create_plugins(delete $opts->{local_plugins});
@@ -134,7 +134,6 @@ sub _start {
         my $irc = $class->spawn(%$opts);
         push @{ $self->{ircs} }, [$network, $irc];
     }
-
 
     for my $entry (@{ $self->{ircs} }) {
         my ($network, $irc) = @$entry;
@@ -213,7 +212,7 @@ sub _status {
     my $irc; eval { $irc = $context->isa('POE::Component::IRC') };
     $context = $self->_irc_to_network($context) if $irc;
     $context = defined $context ? " [$context]\t" : ' ';
-    
+
     $message = "$stamp$context$message";
 
     if (!$self->{daemonize}) {
