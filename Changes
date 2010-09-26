@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Depend on POE::Component::Client::DNS and use the same resolver object
+      for all IRC components
 
 0.19  Sun Sep 26 02:54:11 GMT 2010
     - On shutdown, wait up to 5 seconds for IRC servers to disconnect after

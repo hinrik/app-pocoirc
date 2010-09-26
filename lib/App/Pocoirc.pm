@@ -9,6 +9,7 @@ sub POE::Kernel::USE_SIGCHLD () { return 1 }
 use App::Pocoirc::Status;
 use IO::Handle;
 use POE;
+use POE::Component::Client::DNS;
 use POSIX 'strftime';
 
 sub new {
@@ -111,6 +112,9 @@ sub _start {
     $kernel->sig(TERM => 'sig_term');
     $self->_status("Started (pid $$)");
 
+    # create the shared DNS resolver
+    $self->{resolver} = POE::Component::Client::DNS->spawn();
+
     # construct global plugins
     $self->_status("Constructing global plugins");
     $self->{global_plugs} = $self->_create_plugins(delete $self->{cfg}{global_plugins});
@@ -131,7 +135,10 @@ sub _start {
         $self->{local_plugs}{$network} = $self->_create_plugins(delete $opts->{local_plugins});
 
         $self->_status('Spawning IRC component', $network);
-        my $irc = $class->spawn(%$opts);
+        my $irc = $class->spawn(
+            %$opts,
+            Resolver => $self->{resolver},
+        );
         push @{ $self->{ircs} }, [$network, $irc];
     }
 
@@ -356,6 +363,8 @@ sub _shutdown {
             $obj->yield('shutdown');
         }
     }
+
+    $self->{resolver}->shutdown();
     $self->{shutdown} = 1;
 
     return;
