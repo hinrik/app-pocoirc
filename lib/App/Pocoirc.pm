@@ -209,9 +209,9 @@ sub _status {
     my $stamp = strftime('%Y-%m-%d %H:%M:%S', localtime);
     my $irc; eval { $irc = $context->isa('POE::Component::IRC') };
     $context = $self->_irc_to_network($context) if $irc;
-    $context = defined $context ? " [$context]" : '';
+    $context = defined $context ? " [$context]\t" : ' ';
     
-    $message = "$stamp$context $message";
+    $message = "$stamp$context$message";
 
     if (!$self->{daemonize}) {
         if (defined $type && $type eq 'error') {
