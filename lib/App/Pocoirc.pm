@@ -12,6 +12,9 @@ use POE;
 use POE::Component::IRC::Common qw(irc_to_utf8);
 use POE::Component::Client::DNS;
 use POSIX 'strftime';
+use Module::Pluggable
+    sub_name    => '_available_plugins',
+    search_path => 'POE::Component::IRC::Plugin';
 
 sub new {
     my ($package, %args) = @_;
@@ -20,6 +23,14 @@ sub new {
 
 sub run {
     my ($self) = @_;
+
+    if ($self->{list_plugins}) {
+        for my $plugin ($self->_available_plugins()) {
+            $plugin =~ s/^POE::Component::IRC::Plugin:://;
+            print $plugin, "\n";
+        }
+        return;
+    }
 
     $self->_setup();
 

@@ -6,6 +6,8 @@ Revision history for App-Pocoirc
     - Convert to utf8 and strip all colors/formatting from IRC messages
       before they end up in the status log
     - Log it if we can't log into an IRC server due to the nick being in use
+    - Move -L/--plugin option to -U/--plugin
+    - Add -L/--list-plugins to list all available pocoirc plugins
 
 0.22  Mon Sep 27 09:30:56 GMT 2010
     - Remove some erroneous docs from the App::Pocoirc::Status Pod.

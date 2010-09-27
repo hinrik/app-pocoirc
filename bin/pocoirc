@@ -9,12 +9,13 @@ use Pod::Usage;
 my %args;
 GetOptions(
     # program options
-    'c|check'      => \$args{check_cfg},
-    'f|config=s'   => \$args{cfg_file},
-    'v|verbose'    => \$args{verbose},
-    't|trace'      => \$args{trace},
-    'd|daemonize'  => \$args{daemonize},
-    'b|no-color'   => \$args{no_color},
+    'c|check'        => \$args{check_cfg},
+    'f|config=s'     => \$args{cfg_file},
+    'v|verbose'      => \$args{verbose},
+    't|trace'        => \$args{trace},
+    'd|daemonize'    => \$args{daemonize},
+    'b|no-color'     => \$args{no_color},
+    'L|list-plugins' => \$args{list_plugins},
 
     # global config options
     'I|lib=s@'     => \$args{lib},
@@ -32,7 +33,7 @@ GetOptions(
     'i|ircname=s'    => \$args{ircname},
     'j|join=s@'      => \$args{chan_specs},
     'N|nspassword=s' => \$args{nspassword},
-    'L|plugin=s@'    => \$args{plugin_specs},
+    'U|plugin=s@'    => \$args{plugin_specs},
     'a|arg=s@'       => \$args{args},
     'V|version'      => sub {
         no strict 'vars';
@@ -162,7 +163,7 @@ App::Pocoirc->new(
     cfg       => $config,
     (map {
         defined $args{$_} ? ($_ => $args{$_}) : ()
-    } qw(check_cfg daemonize verbose trace no_color))
+    } qw(check_cfg daemonize verbose trace no_color list_plugins))
 )->run();
 
 =encoding utf8
@@ -181,6 +182,7 @@ B<pocoirc> <options>
    -d, --daemonize              Run in the background
    -v, --verbose                Show IRC protocol messages
    -t, --trace                  Show all IRC events
+   -L, --list-plugins           List available plugins
    -N, --no-color               Don't use terminal colors
    -V, --version                Print version
    -h, --help                   Print this usage message
@@ -194,7 +196,7 @@ B<pocoirc> <options>
    -i FOO, --ircname FOO        Use ircname FOO
    -j FOO, --join FOO           Join channel FOO (see below)
    -N FOO, --nspassword FOO     NickServ password (see below)
-   -L FOO, --plugin FOO         Load plugin FOO (see below)
+   -U FOO, --plugin FOO         Load plugin FOO (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
    -a FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
@@ -210,14 +212,14 @@ B<pocoirc> <options>
  When you use the -N option, a NickServID plugin will be added for you with
  the supplied password.
 
- Arguments to the -L option should consist of the short class name, zero or
+ Arguments to the -U option should consist of the short class name, zero or
  more whitespace, and possibly a JSON hash of arguments to the plugin's
  constructor:
 
-  -L AutoJoin
-  -L 'AutoJoin{"ReJoinOnKick":0}'
-  -L 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
-  -L 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
+  -U AutoJoin
+  -U 'AutoJoin{"ReJoinOnKick":0}'
+  -U 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
+  -U 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
 
  For documentation on the configuration file, do "perldoc App::Pocoirc"
 
