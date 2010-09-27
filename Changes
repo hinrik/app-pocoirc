@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.22  Mon Sep 27 09:30:56 GMT 2010
     - Remove some erroneous docs from the App::Pocoirc::Status Pod.
 
 0.21  Mon Sep 27 03:46:03 GMT 2010
