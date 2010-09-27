@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.23  Mon Sep 27 19:57:02 GMT 2010
     - Format the verbose output like other debugging output
     - Don't raise an exception when someone parts without a part message
     - Convert to utf8 and strip all colors/formatting from IRC messages
