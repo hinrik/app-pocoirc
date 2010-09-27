@@ -235,86 +235,12 @@ sub _default {
 
 =head1 NAME
 
-POE::Component::IRC::Plugin::AutoJoin - A PoCo-IRC plugin which
-keeps you on your favorite channels
-
-=head1 SYNOPSIS
-
- use POE qw(Component::IRC::State Component::IRC::Plugin::AutoJoin);
-
- my $nickname = 'Chatter';
- my $server = 'irc.blahblahblah.irc';
-
- my %channels = (
-     '#Blah'   => '',
-     '#Secret' => 'secret_password',
-     '#Foo'    => '',
- );
- 
- POE::Session->create(
-     package_states => [
-         main => [ qw(_start irc_join) ],
-     ],
- );
-
- $poe_kernel->run();
-
- sub _start {
-     my $irc = POE::Component::IRC::State->spawn( 
-         Nick => $nickname,
-         Server => $server,
-     ) or die "Oh noooo! $!";
-
-     $irc->plugin_add('AutoJoin', POE::Component::IRC::Plugin::AutoJoin->new( Channels => \%channels ));
-     $irc->yield(register => qw(join);
-     $irc->yield(connect => { } );
- }
- 
- sub S_join {
-     my $chan = @_[ARG1];
-     $irc->yield(privmsg => $chan => "hi $channel!");
- }
-
+App::Pocoirc::Stats - A PoCo-IRC plugin which logs IRC status
 
 =head1 DESCRIPTION
 
-POE::Component::IRC::Plugin::AutoJoin is a L<POE::Component::IRC|POE::Component::IRC>
-plugin. If you get disconnected, the plugin will join all the channels you were
-on the next time it gets connected to the IRC server. It can also rejoin a
-channel if the IRC component gets kicked from it. It keeps track of channel
-keys so it will be able to rejoin keyed channels in case of reconnects/kicks.
-
-If a L<POE::Component::IRC::Plugin::NickServID|POE::Component::IRC::Plugin::NickServID>
-plugin has been added to the IRC component, then AutoJoin will wait for a
-reply from NickServ before joining channels on connect.
-
-This plugin requires the IRC component to be
-L<POE::Component::IRC::State|POE::Component::IRC::State> or a subclass thereof.
-
-=head1 METHODS
-
-=head2 C<new>
-
-Two optional arguments:
-
-B<'Channels'>, either an array reference of channel names, or a hash reference
-keyed on channel name, containing the password for each channel. By default it
-uses the channels the component is already on, if any.
-
-B<'RejoinOnKick'>, set this to 1 if you want the plugin to try to rejoin a
-channel (once) if you get kicked from it. Default is 0.
-
-B<'Rejoin_delay'>, the time, in seconds, to wait before rejoining a channel
-after being kicked (if B<'RejoinOnKick'> is on). Default is 5.
-
-B<'Retry_when_banned'>, if you can't join a channel due to a ban, set this
-to the number of seconds to wait between retries. Default is 0 (disabled).
-
-B<'NickServ_delay'>, how long (in seconds) to wait for a reply from NickServ
-before joining channels. Default is 5.
-
-Returns a plugin object suitable for feeding to
-L<POE::Component::IRC|POE::Component::IRC>'s C<plugin_add> method.
+This plugin is used internally by L<App::Pocoirc|App::Pocoirc>. No need for
+you to use it.
 
 =head1 AUTHOR
 
