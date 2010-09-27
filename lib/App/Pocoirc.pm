@@ -9,6 +9,7 @@ sub POE::Kernel::USE_SIGCHLD () { return 1 }
 use App::Pocoirc::Status;
 use IO::Handle;
 use POE;
+use POE::Component::IRC::Common qw(irc_to_utf8);
 use POE::Component::Client::DNS;
 use POSIX 'strftime';
 
@@ -46,6 +47,7 @@ sub run {
                 irc_plugin_del
                 irc_plugin_error
                 irc_disconnected
+                irc_433
             )],
         ],
     );
@@ -172,6 +174,17 @@ sub _start {
     delete $self->{global_plugs};
     delete $self->{local_plugs};
 
+    return;
+}
+
+# let's log this if it's preventing us from logging in
+sub irc_433 {
+    my $self = $_[OBJECT];
+    my $irc = $_[SENDER]->get_heap();
+    my $reason = irc_to_utf8($_[ARG2]->[1]);
+    return if $irc->logged_in();
+    my $nick = $irc->nick_name();
+    $self->_status("Unable to log in: $reason", $irc);
     return;
 }
 

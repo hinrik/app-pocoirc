@@ -5,6 +5,7 @@ Revision history for App-Pocoirc
     - Don't raise an exception when someone parts without a part message
     - Convert to utf8 and strip all colors/formatting from IRC messages
       before they end up in the status log
+    - Log it if we can't log into an IRC server due to the nick being in use
 
 0.22  Mon Sep 27 09:30:56 GMT 2010
     - Remove some erroneous docs from the App::Pocoirc::Status Pod.
