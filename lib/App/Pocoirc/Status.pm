@@ -133,13 +133,13 @@ sub S_part {
     my ($self, $irc) = splice @_, 0, 2;
     my $user   = ${ $_[0] };
     my $chan   = ${ $_[1] };
-    my $reason = ${ $_[2] };
+    my $reason = ref $_[2] eq 'SCALAR' ? ${ $_[2] } : '';
     my $nick   = (split /!/, $user)[0];
 
     $self->{Pocoirc}->_status("Event S_part", $irc, 'debug') if $self->{Trace};
     return PCI_EAT_NONE if $nick ne $irc->nick_name();
     my $msg = "Parted channel $chan";
-    $msg .= " ($reason)" if defined $reason;
+    $msg .= " ($reason)" if $reason ne '';
     $self->{Pocoirc}->_status($msg, $irc);
     return PCI_EAT_NONE;
 }
