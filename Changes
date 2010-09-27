@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Format the verbose output like other debugging output
 
 0.22  Mon Sep 27 09:30:56 GMT 2010
     - Remove some erroneous docs from the App::Pocoirc::Status Pod.

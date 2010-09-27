@@ -217,7 +217,7 @@ sub S_raw {
     my ($self, $irc) = splice @_, 0, 2;
     my $raw = ${ $_[0] };
     return PCI_EAT_NONE if !$self->{Verbose};
-    $self->{Pocoirc}->_status("->$raw", $irc);
+    $self->{Pocoirc}->_status("Raw: $raw", $irc, 'debug');
     return PCI_EAT_NONE;
 }
 
