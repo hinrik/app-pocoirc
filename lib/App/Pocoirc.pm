@@ -46,6 +46,14 @@ sub run {
         die "Can't daemonize: $@\n" if $@;
     }
 
+    if (defined $self->{cfg}{pid_file}) {
+        my $file = $self->{cfg}{pid_file};
+        die "Pid file already exists. Pocoirc already running?\n" if -e $file;
+        open my $fh, '>', $file or die "Can't create pid file $file: $!\n";
+        print $fh "$$\n";
+        close $fh;
+    }
+
     POE::Session->create(
         object_states => [
             $self => [qw(
@@ -64,6 +72,7 @@ sub run {
     );
 
     $poe_kernel->run();
+    unlink $self->{cfg}{pid_file} if defined $self->{cfg}{pid_file};
     return;
 }
 

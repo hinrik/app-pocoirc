@@ -8,6 +8,7 @@ Revision history for App-Pocoirc
     - Log it if we can't log into an IRC server due to the nick being in use
     - Move -L/--plugin option to -U/--plugin
     - Add -L/--list-plugins to list all available pocoirc plugins
+    - Add -F/--pid-file for keeping a pid file
 
 0.22  Mon Sep 27 09:30:56 GMT 2010
     - Remove some erroneous docs from the App::Pocoirc::Status Pod.

@@ -18,8 +18,9 @@ GetOptions(
     'L|list-plugins' => \$args{list_plugins},
 
     # global config options
-    'I|lib=s@'     => \$args{lib},
-    'l|log-file=s' => \$args{log_file},
+    'I|lib=s@'       => \$args{lib},
+    'l|log-file=s'   => \$args{log_file},
+    'F|pid-file=s'   => \$args{pid_file},
 
     # network-specific config options
     '6|ipv6'         => \$args{ipv6},
@@ -35,6 +36,7 @@ GetOptions(
     'N|nspassword=s' => \$args{nspassword},
     'U|plugin=s@'    => \$args{plugin_specs},
     'a|arg=s@'       => \$args{args},
+
     'V|version'      => sub {
         no strict 'vars';
         my $version = defined $App::Pocoirc::VERSION
@@ -145,7 +147,7 @@ else {
     }
 
     $config = {
-        (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file)),
+        (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file pid_file)),
         networks => [
             {
                 name => 'default',
@@ -203,6 +205,9 @@ B<pocoirc> <options>
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
    -l, --log-file               Write status messages to this log file
+
+ When you specify a pid file with -F, pocoirc will refuse to run if the pid
+ file already exists.
 
  Arguments to the -j option can be a channel name (e.g. '#foo') or a channel
  name and a password separated by a colon (e.g. '#foo:bar'). If you specify
