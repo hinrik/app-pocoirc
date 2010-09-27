@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.21  Mon Sep 27 03:46:03 GMT 2010
     - Make --no-color actually work (and use -b for the short option)
 
 0.20  Sun Sep 26 03:49:11 GMT 2010
