@@ -17,7 +17,7 @@ sub new {
 sub PCI_register {
     my ($self, $irc) = @_;
 
-    $irc->raw_events(1) if $self->{Trace} || $self->{Verbose};
+    $irc->raw_events(1) if $self->{Verbose};
 
     if ($self->{Trace}) {
         $irc->plugin_register($self, 'SERVER', 'all');
