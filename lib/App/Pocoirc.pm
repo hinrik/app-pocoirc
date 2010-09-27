@@ -180,7 +180,7 @@ sub _start {
 sub irc_plugin_add {
     my ($self, $alias) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status("EVENT S_plugin_add", $irc, 'debug') if $self->{trace};
+    $self->_status("Event S_plugin_add", $irc, 'debug') if $self->{trace};
     $self->_status("Added plugin $alias", $irc);
     return;
 }
@@ -188,7 +188,7 @@ sub irc_plugin_add {
 sub irc_plugin_del {
     my ($self, $alias) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status("EVENT S_plugin_del", $irc, 'debug') if $self->{trace};
+    $self->_status("Event S_plugin_del", $irc, 'debug') if $self->{trace};
     $self->_status("Deleted plugin $alias", $irc);
     return;
 }
@@ -196,7 +196,7 @@ sub irc_plugin_del {
 sub irc_plugin_error {
     my ($self, $error) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status("EVENT S_plugin_error", $irc, 'debug') if $self->{trace};
+    $self->_status("Event S_plugin_error", $irc, 'debug') if $self->{trace};
     $self->_status($error, $irc, 'error');
     return;
 }
