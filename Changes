@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Make --no-color actually work (and use -b for the short option)
 
 0.20  Sun Sep 26 03:49:11 GMT 2010
     - Depend on POE::Component::Client::DNS and use the same resolver object

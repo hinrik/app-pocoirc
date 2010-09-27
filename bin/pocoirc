@@ -14,7 +14,7 @@ GetOptions(
     'v|verbose'    => \$args{verbose},
     't|trace'      => \$args{trace},
     'd|daemonize'  => \$args{daemonize},
-    'N|no-color'   => \$args{no_color},
+    'b|no-color'   => \$args{no_color},
 
     # global config options
     'I|lib=s@'     => \$args{lib},

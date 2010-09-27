@@ -220,19 +220,29 @@ sub _status {
     $context = $self->_irc_to_network($context) if $irc;
     $context = defined $context ? " [$context]\t" : ' ';
 
-    $message = "$stamp$context$message";
+    if (defined $type && $type eq 'error') {
+        $message = "!!! $message";
+    }
+    elsif (defined $type && $type eq 'debug') {
+        $message = ">>> $message";
+    }
 
-    if (!$self->{daemonize}) {
+    my $log_line = "$stamp$context$message";
+    my $term_line = $log_line;
+
+    if (!$self->{no_color}) {
         if (defined $type && $type eq 'error') {
-            print colored($message, 'red'), "\n";
+            $term_line = colored($term_line, 'red');
         }
         elsif (defined $type && $type eq 'debug') {
-            print colored($message, 'yellow'), "\n";
+            $term_line = colored($term_line, 'yellow');
         }
         else {
-            print colored($message, 'green'), "\n";
+            $term_line = colored($term_line, 'green');
         }
     }
+
+    print $term_line, "\n" if !$self->{daemonize};
 
     if (defined $self->{log_file}) {
         my $fh;
@@ -241,7 +251,7 @@ sub _status {
         }
 
         $fh->autoflush(1);
-        print $fh $message, "\n";
+        print $fh $log_line, "\n";
         close $fh;
     }
 
