@@ -3,6 +3,8 @@ Revision history for App-Pocoirc
 {{$NEXT}}
     - Format the verbose output like other debugging output
     - Don't raise an exception when someone parts without a part message
+    - Convert to utf8 and strip all colors/formatting from IRC messages
+      before they end up in the status log
 
 0.22  Mon Sep 27 09:30:56 GMT 2010
     - Remove some erroneous docs from the App::Pocoirc::Status Pod.
