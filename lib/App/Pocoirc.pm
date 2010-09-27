@@ -25,7 +25,7 @@ sub run {
     my ($self) = @_;
 
     if ($self->{list_plugins}) {
-        for my $plugin ($self->_available_plugins()) {
+        for my $plugin (sort $self->_available_plugins()) {
             $plugin =~ s/^POE::Component::IRC::Plugin:://;
             print $plugin, "\n";
         }
