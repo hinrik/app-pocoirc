@@ -185,7 +185,7 @@ B<pocoirc> <options>
    -v, --verbose                Show IRC protocol messages
    -t, --trace                  Show all IRC events
    -L, --list-plugins           List available plugins
-   -N, --no-color               Don't use terminal colors
+   -b, --no-color               Don't use terminal colors
    -V, --version                Print version
    -h, --help                   Print this usage message
 
