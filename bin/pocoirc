@@ -226,7 +226,8 @@ constructor:
  -a 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
  -a 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
 
- For documentation on the configuration file, do "perldoc App::Pocoirc"
+For documentation of the configuration file, do "perldoc
+L<App::Pocoirc|App::Pocoirc>".
 
 =head1 AUTHOR
 
