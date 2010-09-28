@@ -201,7 +201,7 @@ sub irc_433 {
     my $reason = irc_to_utf8($_[ARG2]->[1]);
     return if $irc->logged_in();
     my $nick = $irc->nick_name();
-    $self->_status("Unable to log in: $reason", $irc);
+    $self->_status($irc, 'normal', "Login attempt failed: $reason");
     return;
 }
 
