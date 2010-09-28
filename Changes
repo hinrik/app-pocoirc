@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.24  Tue Sep 28 08:50:10 GMT 2010
     - Sort the plugin list emitted by -L
     - Use -a (add plugin) instead of -U for --plugin, and -A for --arg
 
