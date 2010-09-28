@@ -2,6 +2,7 @@ Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Sort the plugin list emitted by -L
+    - Use -a (add plugin) instead of -U for --plugin, and -A for --arg
 
 0.23  Mon Sep 27 19:57:02 GMT 2010
     - Format the verbose output like other debugging output

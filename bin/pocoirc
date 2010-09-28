@@ -34,8 +34,8 @@ GetOptions(
     'i|ircname=s'    => \$args{ircname},
     'j|join=s@'      => \$args{chan_specs},
     'N|nspassword=s' => \$args{nspassword},
-    'U|plugin=s@'    => \$args{plugin_specs},
-    'a|arg=s@'       => \$args{args},
+    'a|plugin=s@'    => \$args{plugin_specs},
+    'A|arg=s@'       => \$args{args},
 
     'V|version'      => sub {
         no strict 'vars';
@@ -198,33 +198,33 @@ B<pocoirc> <options>
    -i FOO, --ircname FOO        Use ircname FOO
    -j FOO, --join FOO           Join channel FOO (see below)
    -N FOO, --nspassword FOO     NickServ password (see below)
-   -U FOO, --plugin FOO         Load plugin FOO (see below)
+   -a FOO, --plugin FOO         Add plugin FOO (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
-   -a FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
+   -A FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
    -l, --log-file               Write status messages to this log file
 
- When you specify a pid file with -F, pocoirc will refuse to run if the pid
- file already exists.
+When you specify a pid file with B<-F>, pocoirc will refuse to run if the pid
+file already exists.
 
- Arguments to the -j option can be a channel name (e.g. '#foo') or a channel
- name and a password separated by a colon (e.g. '#foo:bar'). If you specify
- any channels, an AutoJoin plugin with these parameters will be added to
- your IRC component.
+Arguments to the B<-j> option can be a channel name (e.g. '#foo') or a channel
+name and a password separated by a colon (e.g. '#foo:bar'). If you specify
+any channels, an AutoJoin plugin with these parameters will be added to
+your IRC component.
 
- When you use the -N option, a NickServID plugin will be added for you with
- the supplied password.
+When you use the B<-N> option, a NickServID plugin will be added for you with
+the supplied password.
 
- Arguments to the -U option should consist of the short class name, zero or
- more whitespace, and possibly a JSON hash of arguments to the plugin's
- constructor:
+Arguments to the B<-a> option should consist of the short class name, zero or
+more whitespace, and possibly a JSON hash of arguments to the plugin's
+constructor:
 
-  -U AutoJoin
-  -U 'AutoJoin{"ReJoinOnKick":0}'
-  -U 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
-  -U 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
+ -a AutoJoin
+ -a 'AutoJoin{"ReJoinOnKick":0}'
+ -a 'AutoJoin{"ReJoinOnKick":0,"Channels":["#foo","#bar"]}'
+ -a 'AutoJoin {"ReJoinOnKick": 0, "Channels": ["#foo", "#bar"]}'
 
  For documentation on the configuration file, do "perldoc App::Pocoirc"
 
