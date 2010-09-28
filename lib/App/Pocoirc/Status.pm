@@ -244,7 +244,7 @@ sub _default {
 
 =head1 NAME
 
-App::Pocoirc::Stats - A PoCo-IRC plugin which logs IRC status
+App::Pocoirc::Status - A PoCo-IRC plugin which logs IRC status
 
 =head1 DESCRIPTION
 
