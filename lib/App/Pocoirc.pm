@@ -153,7 +153,7 @@ sub _start {
         $self->_status('Constructing local plugins', $network);
         $self->{local_plugs}{$network} = $self->_create_plugins(delete $opts->{local_plugins});
 
-        $self->_status('Spawning IRC component', $network);
+        $self->_status($network, 'normal', "Spawning IRC component object ($class)");
         my $irc = $class->spawn(
             %$opts,
             Resolver => $self->{resolver},
