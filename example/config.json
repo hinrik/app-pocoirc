@@ -5,9 +5,8 @@
       ]
    ],
    "nick":"foobar1234",
-   "networks":[
-      {
-         "name":"freenode",
+   "networks":{
+      "freenode":{
          "local_plugins":[
             [
                "AutoJoin",
@@ -20,12 +19,11 @@
          ],
          "server":"irc.freenode.net"
       },
-      {
-         "name":"magnet",
+      "magnet":{
          "nick":"hlagherf32fr",
          "server":"irc.perl.org"
       }
-   ],
+   },
    "global_plugins":[
       [
          "CTCP"

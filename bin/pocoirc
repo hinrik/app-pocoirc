@@ -148,16 +148,15 @@ else {
 
     $config = {
         (map { defined $args{$_} ? ($_ => $args{$_}) : () } qw(lib log_file pid_file)),
-        networks => [
-            {
-                name => 'default',
+        networks => {
+            default => {
                 local_plugins => \@plugins,
                 %direct_args,
                 (map {
                     defined $args{$_} ? ($_ => $args{$_}) : ()
                 } qw(class server port password nick username ircname ipv6 ssl)),
             }
-        ],
+        },
     };
 }
 

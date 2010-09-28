@@ -100,9 +100,7 @@ sub _setup {
         $self->_require_plugin($plug_spec);
     }
 
-    for my $opts (@{ $self->{cfg}{networks} }) {
-        die "Network name missing\n" if !defined $opts->{name};
-
+    while (my ($network, $opts) = each %{ $self->{cfg}{networks} }) {
         while (my ($opt, $value) = each %{ $self->{cfg} }) {
             next if $opt =~ /^(?:networks|global_plugins|local_plugins)$/;
             $opts->{$opt} = $value if !defined $opts->{$opt};
@@ -113,7 +111,7 @@ sub _setup {
         }
 
         if (!defined $opts->{server}) {
-            die "Server for network '$opts->{name}' not specified\n";
+            die "Server for network '$network' not specified\n";
         }
 
         $opts->{class} = 'POE::Component::IRC::State' if !defined $opts->{class};
@@ -148,8 +146,7 @@ sub _start {
     );
 
     # construct IRC components
-    for my $opts (@{ $self->{cfg}{networks} }) {
-        my $network = delete $opts->{name};
+    while (my ($network, $opts) = each %{ $self->{cfg}{networks} }) {
         my $class = delete $opts->{class};
 
         # construct network-specific plugins

@@ -10,13 +10,12 @@ local_plugins:
   - [BotTraffic]
 
 networks:
-  - name:     freenode
+  freenode:
     server:   irc.freenode.net
     # override default local plugins
     local_plugins:
       - [AutoJoin, { Channels: ['#foodsfdsf'] } ]
-
-  - name:   magnet
+  magnet:
     server: irc.perl.org
     nick:   hlagherf32fr    # use a different nick on this server
 # vim: sw=2
