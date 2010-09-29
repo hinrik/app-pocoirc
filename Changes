@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.26  Wed Sep 29 05:22:25 UTC 2010
     - Fix a problem with using the Status plugin on multiple networks
 
 0.25  Wed Sep 29 05:03:27 UTC 2010
