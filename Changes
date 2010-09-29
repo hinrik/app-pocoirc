@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Fix a problem with using the Status plugin on multiple networks
 
 0.25  Wed Sep 29 05:03:27 UTC 2010
     - In the config, keep networks in a hash, not an array
