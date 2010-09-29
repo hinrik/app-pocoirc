@@ -455,6 +455,8 @@ to load locally (one object per component) or globally (single object)
 
  nick: foobar1234
  username: foobar
+ log_file: /my/log.file
+ lib: ['/my/modules']
 
  global_plugins:
    - [CTCP]
@@ -463,12 +465,11 @@ to load locally (one object per component) or globally (single object)
    - [BotTraffic]
 
  networks:
-   - name:   freenode
+   freenode:
      server: irc.freenode.net
      local_plugins:
        - [AutoJoin, { Channels: ['#foodsfdsf'] } ]
-
-   - name:   magnet
+   magnet:
      server: irc.perl.org
      nick:   hlagherf32fr
 
@@ -481,23 +482,23 @@ required.
 C<lib> is an array of directories containing Perl modules (e.g. plugins).
 Just like Perl's I<-I>.
 
-C<log_file> is the path to a log to which status messages will be written.
+C<log_file> is the path to a log file to which status messages will be written.
 
 =head2 Networks
 
-The C<networks> option should be an array of network hashes. A network hash
-consists of C<name>, C<local_plugins>, and parameters to POE::Component::IRC.
-Only C<name> (and C<server> if not defined at the top level) is required.
-The POE::Component::IRC parameters specified in this hash will override the
-ones specified at the top level.
+The C<networks> option should be hash of network hashes. The keys are the
+names of the networks. A network hash can contain C<local_plugins> and
+parameters to POE::Component::IRC. None are required, except C<server> if not
+defined at the top level. The POE::Component::IRC parameters specified in this
+hash will override the ones specified at the top level.
 
 =head2 Plugins
 
 The C<global_plugins> and C<local_plugins> options should consist of an array
 containing the short plugin class name (e.g. 'AutoJoin') and optionally a hash
-of arguments to that plugin. App::Pocoirc will first try to load
-POE::Component::IRC::Plugin::I<your_plugin> before trying to load
-I<your_plugin>.
+of arguments to that plugin. When figuring out the correct package name,
+App::Pocoirc will first try to load POE::Component::IRC::Plugin::I<your_plugin>
+before trying to load I<your_plugin>.
 
 The plugins in C<global_plugins> will be instantiated once and then added to
 all IRC components. B<Note:> not all plugins are designed to be used with
@@ -514,9 +515,9 @@ Here is some example output from the program:
  2010-09-26 02:49:41 Started (pid 27534)
  2010-09-26 02:49:41 Constructing global plugins
  2010-09-26 02:49:41 [freenode]  Constructing local plugins
- 2010-09-26 02:49:41 [freenode]  Spawning IRC component
+ 2010-09-26 02:49:41 [freenode]  Spawning IRC component (POE::Component::IRC::State)
  2010-09-26 02:49:41 [magnet]    Constructing local plugins
- 2010-09-26 02:49:41 [magnet]    Spawning IRC component
+ 2010-09-26 02:49:41 [magnet]    Spawning IRC component (POE::Component::IRC::State)
  2010-09-26 02:49:41 [freenode]  Registering plugins
  2010-09-26 02:49:41 [magnet]    Registering plugins
  2010-09-26 02:49:41 [freenode]  Connecting to IRC
