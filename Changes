@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.25  Wed Sep 29 05:03:27 UTC 2010
     - In the config, keep networks in a hash, not an array
     - Log which IRC class we're using (e.g. State)
     - Pass the network name and a status callback when registering plugins
