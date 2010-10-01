@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - After daemonizing, notify the POE kernel that we have forked
 
 0.27  Wed Sep 29 22:36:29 GMT 2010
     - Updated Pocoirc.pm's Pod to reflect some recent changes
