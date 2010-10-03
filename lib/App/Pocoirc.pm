@@ -94,9 +94,13 @@ sub _setup {
         Term::ANSIColor->import();
     }
 
-    if (defined $self->{cfg}{lib} && @{ $self->{cfg}{lib} }) {
-        my $lib = delete $self->{cfg}{lib};
-        unshift @INC, @$lib;
+    if (defined $self->{cfg}{lib}) {
+        if (ref $self->{cfg}{lib} eq 'ARRAY' && @{ $self->{cfg}{lib} }) {
+            unshift @INC, @{ delete $self->{cfg}{lib} };
+        }
+        else {
+            unshift @INC, delete $self->{cfg}{lib};
+        }
     }
 
     for my $plug_spec (@{ $self->{cfg}{global_plugins} || [] }) {
@@ -456,10 +460,10 @@ to load locally (one object per component) or globally (single object)
 
 =head1 CONFIGURATION
 
- nick: foobar1234
+ nick:     foobar1234
  username: foobar
  log_file: /my/log.file
- lib: ['/my/modules']
+ lib:      '/my/modules'
 
  global_plugins:
    - [CTCP]
@@ -482,8 +486,8 @@ C<log_file>, C<class>, and default parameters to
 L<POE::Component::IRC|POE::Component::IRC/spawn>. Only C<networks> is
 required.
 
-C<lib> is an array of directories containing Perl modules (e.g. plugins).
-Just like Perl's I<-I>.
+C<lib> is either the name of a directory containing Perl modules (e.g.
+plugins), or an array of such names. Kind of like Perl's I<-I>.
 
 C<log_file> is the path to a log file to which status messages will be written.
 

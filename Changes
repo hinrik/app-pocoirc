@@ -2,6 +2,7 @@ Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Document the 'class' config file option
+    - Allow the 'lib' config option to be a string or an array of strings
 
 0.28  Sun Oct 3 15:29:41 GMT 2010
     - After daemonizing, notify the POE kernel that we have forked
