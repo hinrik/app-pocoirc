@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.29  Sun Oct 3 19:53:28 GMT 2010
     - Document the 'class' config file option
     - Allow the 'lib' config option to be a string or an array of strings
     - Show event arguments with --trace
