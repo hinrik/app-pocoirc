@@ -207,6 +207,29 @@ sub _start {
     return;
 }
 
+sub _event_debug {
+    my ($self, $irc, $event, $args) = @_;
+
+    my @output;
+    for my $arg (@$args) {
+        if (ref $arg eq 'ARRAY') {
+            push @output, '['. join(', ', @$arg) .']';
+        }
+        elsif (ref $arg eq 'HASH') {
+            push @output, '{'. join(', ', map { "$_ => \"$arg->{$_}\"" } keys %$arg) .'}';
+        }
+        elsif (defined $arg) {
+            push @output, "'$arg'";
+        }
+        else {
+            push @output, 'undef';
+        }
+    }
+
+    $self->_status($irc, 'debug', "Event, $event: ".join(', ', @output));
+    return;
+}
+
 # let's log this if it's preventing us from logging in
 sub irc_433 {
     my $self = $_[OBJECT];
@@ -223,7 +246,7 @@ sub irc_433 {
 sub irc_plugin_add {
     my ($self, $alias) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status($irc, 'normal', "Event S_plugin_add") if $self->{trace};
+    $self->_event_debug($irc, 'S_plugin_add', [@_[ARG0..$#_]]) if $self->{trace};
     $self->_status($irc, 'normal', "Added plugin $alias");
     return;
 }
@@ -231,7 +254,7 @@ sub irc_plugin_add {
 sub irc_plugin_del {
     my ($self, $alias) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status($irc, 'debug', "Event S_plugin_del") if $self->{trace};
+    $self->_event_debug($irc, 'S_plugin_del', [@_[ARG0..$#_]]) if $self->{trace};
     $self->_status($irc, 'normal', "Deleted plugin $alias");
     return;
 }
@@ -239,7 +262,7 @@ sub irc_plugin_del {
 sub irc_plugin_error {
     my ($self, $error) = @_[OBJECT, ARG0];
     my $irc = $_[SENDER]->get_heap();
-    $self->_status($irc, 'debug', "Event S_plugin_error") if $self->{trace};
+    $self->_event_debug($irc, 'S_plugin_error', [@_[ARG0..$#_]]) if $self->{trace};
     $self->_status($irc, 'error', $error);
     return;
 }
