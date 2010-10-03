@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.28  Sun Oct 3 15:29:41 GMT 2010
     - After daemonizing, notify the POE kernel that we have forked
 
 0.27  Wed Sep 29 22:36:29 GMT 2010
