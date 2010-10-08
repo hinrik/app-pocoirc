@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Only load Module::Pluggable when we need it (for --list-plugins)
 
 0.29  Sun Oct 3 19:53:28 GMT 2010
     - Document the 'class' config file option
