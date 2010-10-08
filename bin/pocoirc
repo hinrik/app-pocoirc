@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use App::Pocoirc;
 use Getopt::Long qw(:config autohelp no_ignore_case);
-use Pod::Usage;
 
 my %args;
 GetOptions(
@@ -45,7 +44,11 @@ GetOptions(
         print "Version $version\n";
         exit;
     },
-) or pod2usage();
+) or do {
+    require Pod::Usage;
+    Pod::Usage->import();
+    pod2usage();
+};
 
 my $procname = 'pocoirc';
 $0 = $procname;
