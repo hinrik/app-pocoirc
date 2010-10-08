@@ -7,6 +7,7 @@ use warnings FATAL => 'all';
 sub POE::Kernel::USE_SIGCHLD () { return 1 }
 
 use App::Pocoirc::Status;
+use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use IO::Handle;
 use POE;
 use POE::Component::IRC::Common qw(irc_to_utf8);
@@ -53,8 +54,8 @@ sub run {
 
     if (defined $self->{cfg}{pid_file}) {
         my $file = $self->{cfg}{pid_file};
-        die "Pid file already exists. Pocoirc already running?\n" if -e $file;
-        open my $fh, '>', $file or die "Can't create pid file $file: $!\n";
+        sysopen my $fh, $file, O_CREAT|O_EXCL|O_WRONLY
+            or die "Can't create pid file or it already exists. Pocoirc already running?\n";
         print $fh "$$\n";
         close $fh;
     }

@@ -206,7 +206,8 @@ B<pocoirc> <options>
    -A FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
    -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
-   -l, --log-file               Write status messages to this log file
+   -l FOO, --log-file FOO       Write status messages to this log file
+   -F FOO, --pid-file FOO       Use this file as a pid file
 
 When you specify a pid file with B<-F>, pocoirc will refuse to run if the pid
 file already exists.
