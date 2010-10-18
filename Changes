@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.30  Mon Oct 18 21:03:18 GMT 2010
     - Only load Module::Pluggable when we need it (for --list-plugins)
     - Only load Pod::Usage when we need it (with an invalid option)
     - Delay the loading of App::Pocoirc until we need it
