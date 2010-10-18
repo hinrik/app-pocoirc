@@ -125,7 +125,7 @@ else {
     if ($args{chan_specs}) {
         my %chans;
         for my $chanspec (@{ $args{chan_specs} }) {
-            my ($chan, $pass) = split /:/, $chanspec, 2;
+            my ($chan, $pass) = split /,/, $chanspec, 2;
             $chans{$chan} = $pass;
         }
         push @plugins, ['AutoJoin', { Channels => \%chans }];
@@ -213,7 +213,7 @@ When you specify a pid file with B<-F>, pocoirc will refuse to run if the pid
 file already exists.
 
 Arguments to the B<-j> option can be a channel name (e.g. '#foo') or a channel
-name and a password separated by a colon (e.g. '#foo:bar'). If you specify
+name and a password separated by a comma (e.g. '#foo,bar'). If you specify
 any channels, an AutoJoin plugin with these parameters will be added to
 your IRC component.
 
