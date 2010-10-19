@@ -7,6 +7,7 @@ Revision history for App-Pocoirc
     - Improve the output of --trace by recursively dumping hashes/arrays
     - Call bsd_glob() on filenames before opening them, so we understand
       paths like '~/log_file'
+    - Allow .yaml as an extension, not just .yml
 
 0.30  Mon Oct 18 21:03:18 GMT 2010
     - Only load Module::Pluggable when we need it (for --list-plugins)

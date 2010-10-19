@@ -64,7 +64,7 @@ if ($] < 5.013000 && $^O eq 'linux') {
 
 my $config;
 if (defined $args{cfg_file}) {
-    if ($args{cfg_file} =~ /\.yml$/i) {
+    if ($args{cfg_file} =~ /\.ya?ml$/i) {
         require YAML::XS;
         YAML::XS->import('LoadFile');
 
