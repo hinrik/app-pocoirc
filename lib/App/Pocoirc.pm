@@ -13,6 +13,7 @@ use POE;
 use POE::Component::IRC::Common qw(irc_to_utf8);
 use POE::Component::Client::DNS;
 use POSIX 'strftime';
+use Scalar::Util 'looks_like_number';
 
 sub new {
     my ($package, %args) = @_;
@@ -210,28 +211,41 @@ sub _start {
     return;
 }
 
+sub _dump {
+    my ($arg) = @_;
+
+    if (ref $arg eq 'ARRAY') {
+        my @elems;
+        for my $elem (@$arg) {
+            push @elems, _dump($elem);
+        }
+        return '['. join(', ', @elems) .']';
+    }
+    elsif (ref $arg eq 'HASH') {
+        my @pairs;
+        for my $key (keys %$arg) {
+            push @pairs, [$key, _dump($arg->{$key})];
+        }
+        return '{'. join(', ', map { "$_->[0] => $_->[1]" } @pairs) .'}';
+    }
+    elsif (ref $arg) {
+        return $arg;
+    }
+    elsif (defined $arg) {
+        return looks_like_number($arg) ? $arg : "'$arg'";
+    }
+    else {
+        return 'undef';
+    }
+}
+
 sub _event_debug {
     my ($self, $irc, $event, $args) = @_;
 
     my @output;
-    for my $arg (@$args) {
-        if (ref $arg eq 'ARRAY') {
-            push @output, '['. join(', ', @$arg) .']';
-        }
-        elsif (ref $arg eq 'HASH') {
-            push @output, '{'. join(', ', map { "$_ => \"$arg->{$_}\"" } keys %$arg) .'}';
-        }
-        elsif (ref $arg) {
-            push @output, $arg;
-        }
-        elsif (defined $arg) {
-            push @output, "'$arg'";
-        }
-        else {
-            push @output, 'undef';
-        }
+    for my $i (0..$#{ $args }) {
+        push @output, "ARG$i: " . _dump($args->[$i]);
     }
-
     $self->_status($irc, 'debug', "Event, $event: ".join(', ', @output));
     return;
 }
