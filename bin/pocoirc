@@ -5,7 +5,7 @@ use warnings;
 use Getopt::Long qw(:config autohelp no_ignore_case);
 
 my %args;
-GetOptions(
+my $success = GetOptions(
     # program options
     'c|check'        => \$args{check_cfg},
     'f|config=s'     => \$args{cfg_file},
@@ -43,11 +43,14 @@ GetOptions(
         print "Version $version\n";
         exit;
     },
-) or do {
+);
+
+if (!$success || @ARGV) {
+    warn "Unrecognized arguments: @ARGV\n" if @ARGV;
     require Pod::Usage;
     Pod::Usage->import();
     pod2usage();
-};
+}
 
 my $procname = 'pocoirc';
 $0 = $procname;

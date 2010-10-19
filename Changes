@@ -3,6 +3,7 @@ Revision history for App-Pocoirc
 {{$NEXT}}
     - When using --trace, don't put quotes around stringified references
       to objects
+    - Print a usage message when unrecognized non-options are passed
 
 0.30  Mon Oct 18 21:03:18 GMT 2010
     - Only load Module::Pluggable when we need it (for --list-plugins)
