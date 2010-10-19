@@ -221,6 +221,9 @@ sub _event_debug {
         elsif (ref $arg eq 'HASH') {
             push @output, '{'. join(', ', map { "$_ => \"$arg->{$_}\"" } keys %$arg) .'}';
         }
+        elsif (ref $arg) {
+            push @output, $arg;
+        }
         elsif (defined $arg) {
             push @output, "'$arg'";
         }
