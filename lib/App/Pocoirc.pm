@@ -8,6 +8,7 @@ sub POE::Kernel::USE_SIGCHLD () { return 1 }
 
 use App::Pocoirc::Status;
 use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
+use File::Glob ':glob';
 use IO::Handle;
 use POE;
 use POE::Component::IRC::Common qw(irc_to_utf8);
@@ -54,8 +55,8 @@ sub run {
     }
 
     if (defined $self->{cfg}{pid_file}) {
-        my $file = $self->{cfg}{pid_file};
-        sysopen my $fh, $file, O_CREAT|O_EXCL|O_WRONLY
+        $self->{pid_file} = bsd_glob(delete $self->{cfg}{pid_file});
+        sysopen my $fh, $self->{pid_file}, O_CREAT|O_EXCL|O_WRONLY
             or die "Can't create pid file or it already exists. Pocoirc already running?\n";
         print $fh "$$\n";
         close $fh;
@@ -79,7 +80,7 @@ sub run {
     );
 
     $poe_kernel->run();
-    unlink $self->{cfg}{pid_file} if defined $self->{cfg}{pid_file};
+    unlink $self->{pid_file} if defined $self->{pid_file};
     return;
 }
 
@@ -87,7 +88,8 @@ sub run {
 sub _setup {
     my ($self) = @_;
 
-    if (my $log = delete $self->{cfg}{log_file}) {
+    if (defined $self->{cfg}{log_file}) {
+        my $log = bsd_glob(delete $self->{cfg}{log_file});
         open my $fh, '>>', $log or die "Can't open $log: $!\n";
         close $fh;
         $self->{log_file} = $log;

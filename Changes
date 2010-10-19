@@ -5,6 +5,8 @@ Revision history for App-Pocoirc
       to objects
     - Print a usage message when unrecognized non-options are passed
     - Improve the output of --trace by recursively dumping hashes/arrays
+    - Call bsd_glob() on filenames before opening them, so we understand
+      paths like '~/log_file'
 
 0.30  Mon Oct 18 21:03:18 GMT 2010
     - Only load Module::Pluggable when we need it (for --list-plugins)
