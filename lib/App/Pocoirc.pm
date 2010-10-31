@@ -7,6 +7,7 @@ use warnings FATAL => 'all';
 sub POE::Kernel::USE_SIGCHLD () { return 1 }
 
 use App::Pocoirc::Status;
+use Cwd qw(abs_path);
 use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use File::Glob ':glob';
 use IO::Handle;
@@ -48,14 +49,21 @@ sub run {
         require Proc::Daemon;
         eval {
             Proc::Daemon::Init->();
+            if (defined $self->{log_file}) {
+                close STDOUT;
+                close STDERR;
+                open STDOUT, '>>:encoding(utf8)', $self->{log_file}
+                    or die "Can't open $self->{log_file}: $!\n";
+                open STDERR, '>>&STDOUT' or die "Can't redirect STDERR: $!\n";
+                STDOUT->autoflush(1);
+            }
             $poe_kernel->has_forked();
         };
         chomp $@;
         die "Can't daemonize: $@\n" if $@;
     }
 
-    if (defined $self->{cfg}{pid_file}) {
-        $self->{pid_file} = bsd_glob(delete $self->{cfg}{pid_file});
+    if (defined $self->{pid_file}) {
         sysopen my $fh, $self->{pid_file}, O_CREAT|O_EXCL|O_WRONLY
             or die "Can't create pid file or it already exists. Pocoirc already running?\n";
         print $fh "$$\n";
@@ -88,8 +96,12 @@ sub run {
 sub _setup {
     my ($self) = @_;
 
+    if (defined $self->{cfg}{pid_file}) {
+        $self->{pid_file} = abs_path(bsd_glob(delete $self->{cfg}{pid_file}));
+    }
+
     if (defined $self->{cfg}{log_file}) {
-        my $log = bsd_glob(delete $self->{cfg}{log_file});
+        my $log = abs_path(bsd_glob(delete $self->{cfg}{log_file}));
         open my $fh, '>>', $log or die "Can't open $log: $!\n";
         close $fh;
         $self->{log_file} = $log;
@@ -331,18 +343,16 @@ sub _status {
     }
 
     print $term_line, "\n" if !$self->{daemonize};
-
     if (defined $self->{log_file}) {
-        my $fh;
-        if (!open($fh, '>>:encoding(utf8)', $self->{log_file}) && !$self->{daemonize}) {
+        if (open my $fh, '>>:encoding(utf8)', $self->{log_file}) {
+            $fh->autoflush(1);
+            print $fh $log_line, "\n";
+            close $fh;
+        }
+        elsif (!$self->{daemonize}) {
             warn "Can't open $self->{log_file}: $!\n";
         }
-
-        $fh->autoflush(1);
-        print $fh $log_line, "\n";
-        close $fh;
     }
-
     return;
 }
 

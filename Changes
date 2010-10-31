@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Redirect STDOUT/STDERR to the log file (if any) when daemonized
+    - Allow log_file and pid_file to be relative paths when daemonizing
 
 0.31  Wed Oct 20 00:35:29 GMT 2010
     - When using --trace, don't put quotes around stringified references
