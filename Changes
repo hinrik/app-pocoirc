@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.32  Sun Oct 31 17:47:21 GMT 2010
     - Redirect STDOUT/STDERR to the log file (if any) when daemonized
     - Allow log_file and pid_file to be relative paths when daemonizing
 
