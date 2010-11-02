@@ -234,7 +234,7 @@ sub S_quit {
 sub S_shutdown {
     my ($self, $irc) = splice @_, 0, 2;
     $self->_event_debug($irc, 'S_shutdown', \@_) if $self->{Trace};
-    $self->{status}{$irc}->('normal', 'Shutting down');
+    $self->{status}{$irc}->('normal', 'IRC component shut down');
     return PCI_EAT_NONE;
 }
 

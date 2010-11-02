@@ -126,7 +126,7 @@ Here is some example output from the program:
  2010-09-26 02:50:15 Waiting up to 5 seconds for IRC server(s) to disconnect us
  2010-09-26 02:50:15 [magnet]    Error from IRC server: Closing Link: 212-30-192-157.static.simnet.is ()
  2010-09-26 02:50:15 [magnet]    Disconnected from server 217.168.153.160
- 2010-09-26 02:50:15 [magnet]    Shutting down
+ 2010-09-26 02:50:15 [magnet]    IRC component shut down
  2010-09-26 02:50:15 [freenode]  Quit from IRC (Client Quit)
  2010-09-26 02:50:15 [magnet]    Deleted plugin DCC6
  2010-09-26 02:50:15 [magnet]    Deleted plugin ISupport6
@@ -135,7 +135,7 @@ Here is some example output from the program:
  2010-09-26 02:50:15 [magnet]    Deleted plugin PocoircStatus2
  2010-09-26 02:50:15 [freenode]  Error from IRC server: Closing Link: 212-30-192-157.static.simnet.is (Client Quit)
  2010-09-26 02:50:15 [freenode]  Disconnected from server 130.237.188.200
- 2010-09-26 02:50:15 [freenode]  Shutting down
+ 2010-09-26 02:50:15 [freenode]  IRC component shut down
  2010-09-26 02:50:15 [freenode]  Deleted plugin DCC3
  2010-09-26 02:50:15 [freenode]  Deleted plugin AutoJoin2
  2010-09-26 02:50:15 [freenode]  Deleted plugin CTCP2
