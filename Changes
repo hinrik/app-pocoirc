@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.33  Wed Nov 3 02:06:44 GMT 2010
     - Rely on POE::Component::IRC 6.50's shutdown code instead of handling it
       ourselves
     - Include irc_raw_out events in verbose output
