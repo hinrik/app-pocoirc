@@ -3,6 +3,7 @@ Revision history for App-Pocoirc
 {{$NEXT}}
     - Rely on POE::Component::IRC 6.50's shutdown code instead of handling it
       ourselves
+    - Include irc_raw_out events in verbose output
 
 0.32  Sun Oct 31 17:47:21 GMT 2010
     - Redirect STDOUT/STDERR to the log file (if any) when daemonized

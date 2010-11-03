@@ -258,7 +258,7 @@ sub _event_debug {
     for my $i (0..$#{ $args }) {
         push @output, "ARG$i: " . _dump($args->[$i]);
     }
-    $self->_status($irc, 'debug', "Event, $event: ".join(', ', @output));
+    $self->_status($irc, 'debug', "$event: ".join(', ', @output));
     return;
 }
 
@@ -309,9 +309,6 @@ sub _status {
 
     if (defined $type && $type eq 'error') {
         $message = "!!! $message";
-    }
-    elsif (defined $type && $type eq 'debug') {
-        $message = ">>> $message";
     }
 
     my $log_line = "$stamp$context$message";

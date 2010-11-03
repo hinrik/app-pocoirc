@@ -42,6 +42,7 @@ sub PCI_register {
             socks_failed
             socks_rejected
             raw
+            raw_out
         ));
     }
     return 1;
@@ -95,7 +96,7 @@ sub _event_debug {
        push @output, "ARG$i: " . _dump(${ $args->[$i] });
     }
 
-    $self->{status}{$irc}->('debug', "Event $event: ".join(', ', @output));
+    $self->{status}{$irc}->('debug', "$event: ".join(', ', @output));
     return;
 }
 
@@ -266,10 +267,19 @@ sub S_raw {
     my ($self, $irc) = splice @_, 0, 2;
     my $raw = _normalize(${ $_[0] });
     return PCI_EAT_NONE if !$self->{Verbose};
-    $self->{status}{$irc}->('debug', "Raw: $raw");
+    $self->{status}{$irc}->('debug', "<<< $raw");
     return PCI_EAT_NONE;
 }
 
+sub S_raw_out {
+    my ($self, $irc) = splice @_, 0, 2;
+    my $raw = ${ $_[0] };
+    $raw = strip_color($raw);
+    $raw = strip_formatting($raw);
+    return PCI_EAT_NONE if !$self->{Verbose};
+    $self->{status}{$irc}->('debug', ">>> $raw");
+    return PCI_EAT_NONE;
+}
 sub _default {
     my ($self, $irc, $event) = splice @_, 0, 3;
     return PCI_EAT_NONE if !$self->{Trace};
