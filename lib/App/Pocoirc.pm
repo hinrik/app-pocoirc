@@ -481,6 +481,9 @@ L<POE::Component::IRC|POE::Component::IRC>. The main features are:
 =item * Supports multiple IRC components and lets you specify which plugins
 to load locally (one object per component) or globally (single object)
 
+It can be used to launch IRC bots or proxies, loaded with plugins of your
+choice. It is also very useful for testing and debugging IRC servers.
+
 =back
 
 =head1 CONFIGURATION
