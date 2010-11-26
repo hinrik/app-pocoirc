@@ -3,6 +3,7 @@ Revision history for App-Pocoirc
 {{$NEXT}}
     - Convert library directories (--lib) into absolute paths, so they'll still
       work after daemonization (which implies chdir()ing)
+    - Use Class::Load instead of C<eval "require $class">. Safer on Perl <5.10.
 
 0.33  Wed Nov 3 02:06:44 GMT 2010
     - Rely on POE::Component::IRC 6.50's shutdown code instead of handling it
