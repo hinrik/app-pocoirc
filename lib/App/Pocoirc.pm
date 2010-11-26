@@ -112,10 +112,10 @@ sub _setup {
 
     if (defined $self->{cfg}{lib}) {
         if (ref $self->{cfg}{lib} eq 'ARRAY' && @{ $self->{cfg}{lib} }) {
-            unshift @INC, @{ delete $self->{cfg}{lib} };
+            unshift @INC, map { abs_path(bsd_glob($_)) } @{ delete $self->{cfg}{lib} };
         }
         else {
-            unshift @INC, delete $self->{cfg}{lib};
+            unshift @INC, abs_path(bsd_glob(delete $self->{cfg}{lib}));
         }
     }
 
