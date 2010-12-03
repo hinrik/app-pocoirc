@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.34  Fri Dec 3 06:51:23 GMT 2010
     - Convert library directories (--lib) into absolute paths, so they'll still
       work after daemonization (which implies chdir()ing)
     - Use Class::Load instead of C<eval "require $class">. Safer on Perl <5.10.
