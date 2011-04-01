@@ -138,10 +138,18 @@ sub _setup {
             die "Server for network '$network' not specified\n";
         }
 
-        $opts->{class} = 'POE::Component::IRC::State' if !defined $opts->{class};
-        my ($success, $error) = try_load_class($opts->{class});
-        chomp $error if defined $error;
-        die "Can't load class $opts->{class}: $error\n" if !$success;
+        if (defined $opts->{class}) {
+            $opts->{class} = _load_either_class(
+                "POE::Component::IRC::$opts->{class}",
+                $opts->{class},
+            );
+        }
+        else {
+            $opts->{class} = 'POE::Component::IRC::State';
+            my ($success, $error) = try_load_class($opts->{class});
+            chomp $error if defined $error;
+            die "Can't load class $opts->{class}: $error\n" if !$success;
+        }
     }
 
     return;
@@ -222,6 +230,22 @@ sub _start {
     delete $self->{local_plugs};
 
     return;
+}
+
+sub _load_either_class {
+    my ($primary, $secondary) = @_;
+
+    my ($success, $error, $errors);
+    ($success, $error) = try_load_class($primary);
+    return $primary if $success;
+
+    $errors .= $error;
+    ($success, $error) = try_load_class($secondary);
+    return $secondary if $success;
+
+    chomp $error if defined $error;
+    $errors .= $error;
+    die "Failed to load class $primary or $secondary: $errors\n";
 }
 
 sub _dump {
@@ -360,20 +384,10 @@ sub _load_plugin {
     my ($class, $args) = @$plug_spec;
     $args = {} if !defined $args;
 
-    my $fullclass = "POE::Component::IRC::Plugin::$class";
-    my $canonclass = $fullclass;
-    my ($success, $error, $errors);
-    ($success, $error) = try_load_class($fullclass);
-    if (!$success) {
-        $errors .= $error;
-        ($success, $error) = try_load_class($class);
-        if (!$success) {
-            chomp $error if defined $error;
-            $errors .= $error;
-            die "Failed to load plugin $class or $fullclass: $errors\n";
-        }
-        $canonclass = $class;
-    }
+    my $canonclass = _load_either_class(
+        "POE::Component::IRC::Plugin::$class",
+        $class,
+    );
 
     $plug_spec->[1] = $args;
     $plug_spec->[2] = $canonclass;
@@ -521,7 +535,7 @@ plugins), or an array of such names. Kind of like Perl's I<-I>.
 C<log_file> is the path to a log file to which status messages will be written.
 
 C<class> is the IRC component class. Defaults to
-L<POE::Component::IRC|POE::Component::IRC>.
+L<POE::Component::IRC::State|POE::Component::IRC::State>.
 
 =head2 Networks
 

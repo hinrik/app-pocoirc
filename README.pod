@@ -61,7 +61,7 @@ plugins), or an array of such names. Kind of like Perl's I<-I>.
 C<log_file> is the path to a log file to which status messages will be written.
 
 C<class> is the IRC component class. Defaults to
-L<POE::Component::IRC|POE::Component::IRC>.
+L<POE::Component::IRC::State|POE::Component::IRC::State>.
 
 =head2 Networks
 

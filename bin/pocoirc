@@ -207,7 +207,7 @@ B<pocoirc> <options>
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
    -A FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
-   -C FOO, --class FOO          E.g. POE::Component:IRC::Qnet::State
+   -C FOO, --class FOO          Component class, e.g. State or Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
    -l FOO, --log-file FOO       Write status messages to this log file
    -F FOO, --pid-file FOO       Use this file as a pid file
@@ -223,8 +223,9 @@ your IRC component.
 When you use the B<-N> option, a NickServID plugin will be added for you with
 the supplied password.
 
-Arguments to the B<-a> option should consist of the short class name, zero or
-more whitespace, and possibly a JSON hash of arguments to the plugin's
+Arguments to the B<-a> option should consist of the class name (the
+"POE::Component::IRC::Plugin::" prefix can be omitted if it applies), zero
+or more whitespace, and possibly a JSON hash of arguments to the plugin's
 constructor:
 
  -a AutoJoin
