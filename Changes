@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.35  Sat Apr 2 00:22:39 GMT 2011
     - Allow using a short name (e.g. Qnet::State) with --class
     - Fix error in documentation about the default component class
 
