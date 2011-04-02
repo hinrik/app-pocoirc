@@ -36,6 +36,7 @@ my $success = GetOptions(
     'A|arg=s@'       => \$args{args},
 
     'V|version'      => sub {
+        require App::Pocoirc;
         no strict 'vars';
         my $version = defined $App::Pocoirc::VERSION
             ? $App::Pocoirc::VERSION

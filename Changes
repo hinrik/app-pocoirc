@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Fix -V/--version, it was always returning "dev-git"
 
 0.35  Sat Apr 2 00:22:39 GMT 2011
     - Allow using a short name (e.g. Qnet::State) with --class
