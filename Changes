@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.36  Sat Apr 2 01:36:16 GMT 2011
     - Fix -V/--version, it was always returning "dev-git"
 
 0.35  Sat Apr 2 00:22:39 GMT 2011
