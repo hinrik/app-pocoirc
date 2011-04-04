@@ -8,9 +8,9 @@ sub POE::Kernel::USE_SIGCHLD () { return 1 }
 
 use App::Pocoirc::Status;
 use Class::Load qw(try_load_class);
-use Cwd qw(abs_path);
 use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use File::Glob ':glob';
+use File::Spec::Functions 'rel2abs';
 use IO::Handle;
 use POE;
 use POE::Component::IRC::Common qw(irc_to_utf8);
@@ -96,11 +96,11 @@ sub _setup {
     my ($self) = @_;
 
     if (defined $self->{cfg}{pid_file}) {
-        $self->{pid_file} = abs_path(bsd_glob(delete $self->{cfg}{pid_file}));
+        $self->{pid_file} = rel2abs(bsd_glob(delete $self->{cfg}{pid_file}));
     }
 
     if (defined $self->{cfg}{log_file}) {
-        my $log = abs_path(bsd_glob(delete $self->{cfg}{log_file}));
+        my $log = rel2abs(bsd_glob(delete $self->{cfg}{log_file}));
         open my $fh, '>>', $log or die "Can't open $log: $!\n";
         close $fh;
         $self->{log_file} = $log;
@@ -113,10 +113,10 @@ sub _setup {
 
     if (defined $self->{cfg}{lib}) {
         if (ref $self->{cfg}{lib} eq 'ARRAY' && @{ $self->{cfg}{lib} }) {
-            unshift @INC, map { abs_path(bsd_glob($_)) } @{ delete $self->{cfg}{lib} };
+            unshift @INC, map { rel2abs(bsd_glob($_)) } @{ delete $self->{cfg}{lib} };
         }
         else {
-            unshift @INC, abs_path(bsd_glob(delete $self->{cfg}{lib}));
+            unshift @INC, rel2abs(bsd_glob(delete $self->{cfg}{lib}));
         }
     }
 

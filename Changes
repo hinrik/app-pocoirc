@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Preserve symlinks in all supplied filenames
 
 0.36  Sat Apr 2 01:36:16 GMT 2011
     - Fix -V/--version, it was always returning "dev-git"
