@@ -12,8 +12,8 @@ use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use File::Glob ':glob';
 use File::Spec::Functions 'rel2abs';
 use IO::Handle;
+use IRC::Utils qw(decode_irc);
 use POE;
-use POE::Component::IRC::Common qw(irc_to_utf8);
 use POE::Component::Client::DNS;
 use POSIX 'strftime';
 use Scalar::Util 'looks_like_number';
@@ -291,7 +291,7 @@ sub _event_debug {
 sub irc_433 {
     my $self = $_[OBJECT];
     my $irc = $_[SENDER]->get_heap();
-    my $reason = irc_to_utf8($_[ARG2]->[1]);
+    my $reason = decode_irc($_[ARG2]->[1]);
     return if $irc->logged_in();
     my $nick = $irc->nick_name();
     $self->_status($irc, 'normal', "Login attempt failed: $reason");

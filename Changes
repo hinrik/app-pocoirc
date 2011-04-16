@@ -2,6 +2,8 @@ Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Preserve symlinks in all supplied filenames
+    - When using --trace, print the name (e.g. ERR_NICKNAMEINUSE) of every
+      numberic event
 
 0.36  Sat Apr 2 01:36:16 GMT 2011
     - Fix -V/--version, it was always returning "dev-git"

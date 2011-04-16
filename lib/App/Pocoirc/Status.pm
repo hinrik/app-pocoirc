@@ -3,7 +3,7 @@ package App::Pocoirc::Status;
 use strict;
 use warnings FATAL => 'all';
 use Carp;
-use POE::Component::IRC::Common qw(irc_to_utf8 strip_color strip_formatting);
+use IRC::Utils qw(decode_irc strip_color strip_formatting numeric_to_name);
 use POE::Component::IRC::Plugin qw(PCI_EAT_NONE);
 use Scalar::Util qw(looks_like_number);
 
@@ -54,7 +54,7 @@ sub PCI_unregister {
 
 sub _normalize {
     my ($line) = @_;
-    $line = irc_to_utf8($line);
+    $line = decode_irc($line);
     $line = strip_color($line);
     $line = strip_formatting($line);
     return $line;
@@ -142,7 +142,8 @@ sub S_001 {
     my ($self, $irc) = splice @_, 0, 2;
     my $server = ${ $_[0] };
     my $nick = $irc->nick_name();
-    $self->_event_debug($irc, 'S_001', \@_) if $self->{Trace};
+    my $event = 'S_001 ('.numeric_to_name('001').')';
+    $self->_event_debug($irc, 'event', \@_) if $self->{Trace};
     $self->{status}{$irc}->('normal', "Logged in to server $server with nick $nick");
     return PCI_EAT_NONE;
 }
@@ -284,6 +285,12 @@ sub _default {
     my ($self, $irc, $event) = splice @_, 0, 3;
     return PCI_EAT_NONE if !$self->{Trace};
     return PCI_EAT_NONE if $event =~ /^S_plugin_/;
+
+    if (my ($numeric) = $event =~ /^[SU]_(\d+)$/) {
+        my $name = numeric_to_name($numeric);
+        $event .= " ($name)" if defined $name;
+    }
+
     $self->_event_debug($irc, $event, \@_) if $self->{Trace};
     return PCI_EAT_NONE;
 }
