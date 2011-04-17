@@ -22,6 +22,9 @@ L<POE::Component::IRC|POE::Component::IRC>. The main features are:
 =item * Supports multiple IRC components and lets you specify which plugins
 to load locally (one object per component) or globally (single object)
 
+=item * Has an interactive mode where you can issue issue commands and
+call methods on the IRC component(s).
+
 It can be used to launch IRC bots or proxies, loaded with plugins of your
 choice. It is also very useful for testing and debugging IRC servers.
 
@@ -91,60 +94,58 @@ list of local plugins, which can be overridden in a network hash.
 Here is some example output from the program:
 
  $ pocoirc -f example/config.yml
- 2010-09-26 02:49:41 Started (pid 27534)
- 2010-09-26 02:49:41 Constructing global plugins
- 2010-09-26 02:49:41 [freenode]  Constructing local plugins
- 2010-09-26 02:49:41 [freenode]  Spawning IRC component (POE::Component::IRC::State)
- 2010-09-26 02:49:41 [magnet]    Constructing local plugins
- 2010-09-26 02:49:41 [magnet]    Spawning IRC component (POE::Component::IRC::State)
- 2010-09-26 02:49:41 [freenode]  Registering plugins
- 2010-09-26 02:49:41 [magnet]    Registering plugins
- 2010-09-26 02:49:41 [freenode]  Connecting to IRC
- 2010-09-26 02:49:41 [magnet]    Connecting to IRC
- 2010-09-26 02:49:41 [freenode]  Added plugin Whois3
- 2010-09-26 02:49:41 [freenode]  Added plugin ISupport3
- 2010-09-26 02:49:41 [freenode]  Added plugin DCC3
- 2010-09-26 02:49:41 [magnet]    Added plugin Whois6
- 2010-09-26 02:49:41 [magnet]    Added plugin ISupport6
- 2010-09-26 02:49:41 [magnet]    Added plugin DCC6
- 2010-09-26 02:49:41 [freenode]  Added plugin CTCP2
- 2010-09-26 02:49:41 [freenode]  Added plugin AutoJoin2
- 2010-09-26 02:49:41 [freenode]  Added plugin PocoircStatus2
- 2010-09-26 02:49:41 [magnet]    Added plugin CTCP2
- 2010-09-26 02:49:41 [magnet]    Added plugin PocoircStatus2
- 2010-09-26 02:49:41 [magnet]    Connected to server 217.168.153.160
- 2010-09-26 02:49:41 [freenode]  Connected to server 130.237.188.200
- 2010-09-26 02:49:41 [magnet]    Server notice: *** Looking up your hostname...
- 2010-09-26 02:49:41 [magnet]    Server notice: *** Checking Ident
- 2010-09-26 02:49:41 [freenode]  Server notice: *** Looking up your hostname...
- 2010-09-26 02:49:41 [freenode]  Server notice: *** Checking Ident
- 2010-09-26 02:49:41 [freenode]  Server notice: *** Found your hostname
- 2010-09-26 02:49:41 [magnet]    Server notice: *** Found your hostname
- 2010-09-26 02:49:51 [magnet]    Server notice: *** No Ident response
- 2010-09-26 02:49:51 [magnet]    Logged in to server electret.shadowcat.co.uk with nick hlagherf32fr
- 2010-09-26 02:49:55 [freenode]  Server notice: *** No Ident response
- 2010-09-26 02:49:55 [freenode]  Logged in to server lindbohm.freenode.net with nick foobar1234
- 2010-09-26 02:50:00 [freenode]  Joined channel #foodsfdsf
- 2010-09-26 02:50:15 Exiting due to SIGINT
- 2010-09-26 02:50:15 Waiting up to 5 seconds for IRC server(s) to disconnect us
- 2010-09-26 02:50:15 [magnet]    Error from IRC server: Closing Link: 212-30-192-157.static.simnet.is ()
- 2010-09-26 02:50:15 [magnet]    Disconnected from server 217.168.153.160
- 2010-09-26 02:50:15 [magnet]    IRC component shut down
- 2010-09-26 02:50:15 [freenode]  Quit from IRC (Client Quit)
- 2010-09-26 02:50:15 [magnet]    Deleted plugin DCC6
- 2010-09-26 02:50:15 [magnet]    Deleted plugin ISupport6
- 2010-09-26 02:50:15 [magnet]    Deleted plugin CTCP2
- 2010-09-26 02:50:15 [magnet]    Deleted plugin Whois6
- 2010-09-26 02:50:15 [magnet]    Deleted plugin PocoircStatus2
- 2010-09-26 02:50:15 [freenode]  Error from IRC server: Closing Link: 212-30-192-157.static.simnet.is (Client Quit)
- 2010-09-26 02:50:15 [freenode]  Disconnected from server 130.237.188.200
- 2010-09-26 02:50:15 [freenode]  IRC component shut down
- 2010-09-26 02:50:15 [freenode]  Deleted plugin DCC3
- 2010-09-26 02:50:15 [freenode]  Deleted plugin AutoJoin2
- 2010-09-26 02:50:15 [freenode]  Deleted plugin CTCP2
- 2010-09-26 02:50:15 [freenode]  Deleted plugin Whois3
- 2010-09-26 02:50:15 [freenode]  Deleted plugin PocoircStatus2
- 2010-09-26 02:50:15 [freenode]  Deleted plugin ISupport3
+ 2011-04-18 18:10:52 Started (pid 20105)
+ 2011-04-18 18:10:52 Constructing global plugins
+ 2011-04-18 18:10:52 [freenode]  Constructing local plugins
+ 2011-04-18 18:10:52 [freenode]  Spawning IRC component (POE::Component::IRC::State)
+ 2011-04-18 18:10:52 [magnet]    Constructing local plugins
+ 2011-04-18 18:10:52 [magnet]    Spawning IRC component (POE::Component::IRC::State)
+ 2011-04-18 18:10:52 [freenode]  Registering plugins
+ 2011-04-18 18:10:52 [magnet]    Registering plugins
+ 2011-04-18 18:10:52 [freenode]  Connecting to IRC
+ 2011-04-18 18:10:52 [magnet]    Connecting to IRC
+ 2011-04-18 18:10:52 [freenode]  Added plugin Whois3
+ 2011-04-18 18:10:52 [freenode]  Added plugin ISupport3
+ 2011-04-18 18:10:52 [freenode]  Added plugin DCC3
+ 2011-04-18 18:10:52 [magnet]    Added plugin Whois5
+ 2011-04-18 18:10:52 [magnet]    Added plugin ISupport5
+ 2011-04-18 18:10:52 [magnet]    Added plugin DCC5
+ 2011-04-18 18:10:52 [freenode]  Added plugin CTCP1
+ 2011-04-18 18:10:52 [freenode]  Added plugin AutoJoin1
+ 2011-04-18 18:10:52 [freenode]  Added plugin PocoircStatus1
+ 2011-04-18 18:10:52 [magnet]    Added plugin CTCP1
+ 2011-04-18 18:10:52 [magnet]    Added plugin PocoircStatus1
+ 2011-04-18 18:10:52 [magnet]    Connected to server irc.perl.org
+ 2011-04-18 18:10:52 [magnet]    Server notice: *** Looking up your hostname...
+ 2011-04-18 18:10:52 [magnet]    Server notice: *** Checking Ident
+ 2011-04-18 18:10:52 [freenode]  Connected to server irc.freenode.net
+ 2011-04-18 18:10:53 [magnet]    Server notice: *** Found your hostname
+ 2011-04-18 18:10:53 [freenode]  Server notice: *** Looking up your hostname...
+ 2011-04-18 18:10:53 [freenode]  Server notice: *** Checking Ident
+ 2011-04-18 18:10:53 [freenode]  Server notice: *** Couldn't look up your hostname
+ 2011-04-18 18:11:03 [magnet]    Server notice: *** No Ident response
+ 2011-04-18 18:11:03 [magnet]    Logged in to server magnet.shadowcat.co.uk with nick hlagherf32fr
+ 2011-04-18 18:11:07 [freenode]  Server notice: *** No Ident response
+ 2011-04-18 18:11:07 [freenode]  Logged in to server niven.freenode.net with nick foobar1234
+ 2011-04-18 18:11:11 [freenode]  Joined channel #foodsfdsf
+ ^C2011-04-18 18:11:22 Exiting due to SIGINT
+ 2011-04-18 18:11:22 Waiting up to 5 seconds for IRC server(s) to disconnect us
+ 2011-04-18 18:11:22 [magnet]    Error from IRC server: Closing Link: 212-30-192-157.static.simnet.is ()
+ 2011-04-18 18:11:22 [magnet]    Deleted plugin DCC5
+ 2011-04-18 18:11:22 [magnet]    Deleted plugin ISupport5
+ 2011-04-18 18:11:22 [magnet]    Deleted plugin CTCP1
+ 2011-04-18 18:11:22 [magnet]    Deleted plugin Whois5
+ 2011-04-18 18:11:22 [magnet]    Deleted plugin PocoircStatus1
+ 2011-04-18 18:11:22 [magnet]    IRC component shut down
+ 2011-04-18 18:11:22 [freenode]  Quit from IRC (Client Quit)
+ 2011-04-18 18:11:22 [freenode]  Error from IRC server: Closing Link: 212.30.192.157 (Client Quit)
+ 2011-04-18 18:11:22 [freenode]  Deleted plugin AutoJoin1
+ 2011-04-18 18:11:22 [freenode]  Deleted plugin CTCP1
+ 2011-04-18 18:11:22 [freenode]  Deleted plugin DCC3
+ 2011-04-18 18:11:22 [freenode]  Deleted plugin PocoircStatus1
+ 2011-04-18 18:11:22 [freenode]  Deleted plugin Whois3
+ 2011-04-18 18:11:22 [freenode]  Deleted plugin ISupport3
+ 2011-04-18 18:11:22 [freenode]  IRC component shut down
 
 =head1 AUTHOR
 

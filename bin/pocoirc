@@ -14,6 +14,7 @@ my $success = GetOptions(
     'd|daemonize'    => \$args{daemonize},
     'b|no-color'     => \$args{no_color},
     'L|list-plugins' => \$args{list_plugins},
+    'i|interactive'  => \$args{interactive},
 
     # global config options
     'I|lib=s@'       => \$args{lib},
@@ -169,9 +170,10 @@ else {
 require App::Pocoirc;
 App::Pocoirc->new(
     cfg       => $config,
+    cfg_file  => $args{cfg_file},
     (map {
         defined $args{$_} ? ($_ => $args{$_}) : ()
-    } qw(check_cfg daemonize verbose trace no_color list_plugins))
+    } qw(check_cfg daemonize verbose trace no_color list_plugins interactive))
 )->run();
 
 =encoding utf8
@@ -192,6 +194,7 @@ B<pocoirc> <options>
    -t, --trace                  Show all IRC events
    -L, --list-plugins           List available plugins
    -b, --no-color               Don't use terminal colors
+   -i, --interactive            Interactive mode (type 'help' for help)
    -V, --version                Print version
    -h, --help                   Print this usage message
 

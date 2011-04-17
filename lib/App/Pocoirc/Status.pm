@@ -52,6 +52,18 @@ sub PCI_unregister {
     return 1;
 }
 
+sub verbose {
+    my ($self, $value) = @_;
+    $self->{Verbose} = $value;
+    return;
+}
+
+sub trace {
+    my ($self, $value) = @_;
+    $self->{Trace} = $value;
+    return;
+}
+
 sub _normalize {
     my ($line) = @_;
     $line = decode_irc($line);
@@ -233,13 +245,6 @@ sub S_quit {
     return PCI_EAT_NONE;
 }
 
-sub S_shutdown {
-    my ($self, $irc) = splice @_, 0, 2;
-    $self->_event_debug($irc, 'S_shutdown', \@_) if $self->{Trace};
-    $self->{status}{$irc}->('normal', 'IRC component shut down');
-    return PCI_EAT_NONE;
-}
-
 sub S_socketerr {
     my ($self, $irc) = splice @_, 0, 2;
     my $reason = _normalize(${ $_[0] });
@@ -281,6 +286,7 @@ sub S_raw_out {
     $self->{status}{$irc}->('debug', ">>> $raw");
     return PCI_EAT_NONE;
 }
+
 sub _default {
     my ($self, $irc, $event) = splice @_, 0, 3;
     return PCI_EAT_NONE if !$self->{Trace};

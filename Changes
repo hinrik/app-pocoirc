@@ -6,6 +6,10 @@ Revision history for App-Pocoirc
       numberic event
     - Rename -i/--ircname to -r/--realname
     - Quit messages were not getting delivered to IRC servers. Fixed.
+    - Add -i/--interactive which allows the user to call methods from
+      the command line. Depend on POE 1.310 and POE::Component::IRC 6.61
+      for related bugfixes, as well as Data::Dump for dumping return
+      values of method calls.
 
 0.36  Sat Apr 2 01:36:16 GMT 2011
     - Fix -V/--version, it was always returning "dev-git"
