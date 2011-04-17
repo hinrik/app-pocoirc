@@ -328,7 +328,7 @@ sub _status {
     my ($self, $context, $type, $message) = @_;
 
     my $stamp = strftime('%Y-%m-%d %H:%M:%S', localtime);
-    my $irc; eval { $irc = $context->isa('POE::Component::IRC') };
+    my $irc = eval { $context->isa('POE::Component::IRC') };
     $context = $self->_irc_to_network($context) if $irc;
     $context = defined $context ? " [$context]\t" : ' ';
 
