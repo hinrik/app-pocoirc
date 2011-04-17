@@ -5,6 +5,7 @@ Revision history for App-Pocoirc
     - When using --trace, print the name (e.g. ERR_NICKNAMEINUSE) of every
       numberic event
     - Rename -i/--ircname to -r/--realname
+    - Quit messages were not getting delivered to IRC servers. Fixed.
 
 0.36  Sat Apr 2 01:36:16 GMT 2011
     - Fix -V/--version, it was always returning "dev-git"

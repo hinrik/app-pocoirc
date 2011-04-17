@@ -419,7 +419,7 @@ sub sig_die {
     $self->_status(undef, 'error', $_) for @errors;
 
     if (!$self->{shutdown}) {
-        $self->_shutdown('Exiting due to an exception');
+        $self->shutdown('Exiting due to an exception');
     }
 
     $kernel->sig_handled();
@@ -430,8 +430,7 @@ sub sig_int {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
     if (!$self->{shutdown}) {
-        $self->_status(undef, 'normal', 'Exiting due to SIGINT');
-        $self->_shutdown(undef, 'normal', 'Exiting due to SIGINT');
+        $self->shutdown('Exiting due to SIGINT');
     }
     $kernel->sig_handled();
     return;
@@ -441,16 +440,17 @@ sub sig_term {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
     if (!$self->{shutdown}) {
-        $self->_status(undef, 'normal', 'Exiting due to SIGTERM');
-        $self->_shutdown(undef, 'normal', 'Exiting due to SIGTERM');
+        $self->shutdown('Exiting due to SIGTERM');
     }
 
     $kernel->sig_handled();
     return;
 }
 
-sub _shutdown {
+sub shutdown {
     my ($self, $reason) = @_;
+
+    $self->_status(undef, 'normal', $reason);
 
     my $logged_in;
     for my $irc (@{ $self->{ircs} }) {
