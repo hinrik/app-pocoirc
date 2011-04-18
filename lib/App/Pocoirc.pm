@@ -93,7 +93,6 @@ sub run {
     return;
 }
 
-# compilation and config validation
 sub _setup {
     my ($self) = @_;
 
@@ -121,6 +120,13 @@ sub _setup {
             unshift @INC, rel2abs(bsd_glob(delete $self->{cfg}{lib}));
         }
     }
+
+    $self->_load_classes();
+    return;
+}
+
+sub _load_classes {
+    my ($self) = @_;
 
     for my $plug_spec (@{ $self->{cfg}{global_plugins} || [] }) {
         $self->_load_plugin($plug_spec);
@@ -166,15 +172,31 @@ sub _start {
     $kernel->sig(TERM => 'sig_term');
 
     $self->_status(undef, 'normal', "Started (pid $$)");
+    my ($own, $global, $local) = $self->_construct_objects();
+    $self->_register_plugins($session->ID(), $own, $global, $local);
+    $self->{own_plugins} = $own;
+
+    for my $entry (@{ $self->{ircs} }) {
+        my ($network, $irc) = @$entry;
+        $self->_status($network, 'normal', 'Connecting to IRC');
+        $irc->yield('connect');
+    }
+
+    return;
+}
+
+sub _construct_objects {
+    my ($self) = @_;
 
     # create the shared DNS resolver
     $self->{resolver} = POE::Component::Client::DNS->spawn();
 
     # construct global plugins
     $self->_status(undef, 'normal', "Constructing global plugins");
-    $self->{global_plugs} = $self->_create_plugins(delete $self->{cfg}{global_plugins});
 
-    $self->{own_plugins} = [
+    my $global_plugs = $self->_create_plugins(delete $self->{cfg}{global_plugins});
+
+    my $own_plugs = [
         [
             'PocoircStatus',
             App::Pocoirc::Status->new(
@@ -187,7 +209,7 @@ sub _start {
 
     if ($self->{interactive}) {
         require App::Pocoirc::ReadLine;
-        push @{ $self->{own_plugins} }, [
+        push @$own_plugs, [
             'PocoircReadline',
             App::Pocoirc::ReadLine->new(
                 Pocoirc  => $self,
@@ -196,13 +218,14 @@ sub _start {
         ];
     }
 
+    my $local_plugs;
     # construct IRC components
     while (my ($network, $opts) = each %{ $self->{cfg}{networks} }) {
         my $class = delete $opts->{class};
 
         # construct network-specific plugins
         $self->_status($network, 'normal', 'Constructing local plugins');
-        $self->{local_plugs}{$network} = $self->_create_plugins(delete $opts->{local_plugins});
+        $local_plugs->{$network} = $self->_create_plugins(delete $opts->{local_plugins});
 
         $self->_status($network, 'normal', "Spawning IRC component ($class)");
         my $irc = $class->spawn(
@@ -212,47 +235,7 @@ sub _start {
         push @{ $self->{ircs} }, [$network, $irc];
     }
 
-    for my $entry (@{ $self->{ircs} }) {
-        my ($network, $irc) = @$entry;
-        $self->_status($network, 'normal', 'Registering plugins');
-
-        my @plugins = (
-            @{ $self->{global_plugs} },
-            @{ $self->{local_plugs}{$network} }
-        );
-
-        for my $plugin (@plugins) {
-            my ($class, $object) = @$plugin;
-            my $name = $class.$session->ID();
-            $irc->plugin_add($name, $object,
-                network => $network,
-                status  => sub { $self->_status($self->_irc_to_network($irc)."/$name", @_) },
-            );
-        }
-
-        # add our own plugins and bump them to the front of the pipeline
-        for my $own (reverse @{ $self->{own_plugins} }) {
-            my ($name, $plugin) = @$own;
-
-            $irc->plugin_add($name.$session->ID(), $plugin,
-                network => $network,
-                status  => sub { $self->_status($self->_irc_to_network($irc), @_) },
-            );
-            my $idx = $irc->pipeline->get_index($plugin);
-            $irc->pipeline->bump_up($plugin, $idx);
-        }
-    }
-
-    for my $entry (@{ $self->{ircs} }) {
-        my ($network, $irc) = @$entry;
-        $self->_status($network, 'normal', 'Connecting to IRC');
-        $irc->yield('connect');
-    }
-
-    delete $self->{global_plugs};
-    delete $self->{local_plugs};
-
-    return;
+    return $own_plugs, $global_plugs, $local_plugs;
 }
 
 sub _load_either_class {
@@ -269,6 +252,38 @@ sub _load_either_class {
     chomp $error if defined $error;
     $errors .= $error;
     die "Failed to load class $primary or $secondary: $errors\n";
+}
+
+sub _register_plugins {
+    my ($self, $session_id, $own, $global, $local) = @_;
+
+    for my $entry (@{ $self->{ircs} }) {
+        my ($network, $irc) = @$entry;
+        $self->_status($network, 'normal', 'Registering plugins');
+
+        for my $plugin (@$global, @{ $local->{$network} }) {
+            my ($class, $object) = @$plugin;
+            my $name = $class.$session_id;
+            $irc->plugin_add($name, $object,
+                network => $network,
+                status  => sub { $self->_status($self->_irc_to_network($irc)."/$name", @_) },
+            );
+        }
+
+        # add our own plugins and bump them to the front of the pipeline
+        for my $own_plugin (reverse @$own) {
+            my ($name, $plugin) = @$own_plugin;
+
+            $irc->plugin_add($name.$session_id, $plugin,
+                network => $network,
+                status  => sub { $self->_status($self->_irc_to_network($irc), @_) },
+            );
+            my $idx = $irc->pipeline->get_index($plugin);
+            $irc->pipeline->bump_up($plugin, $idx);
+        }
+    }
+
+    return;
 }
 
 sub _dump {
@@ -480,21 +495,14 @@ sub sig_die {
         ." raised exception:\n    $ex->{error_str}";
 
     $self->_status(undef, 'error', $error);
-
-    if (!$self->{shutdown}) {
-        $self->shutdown('Exiting due to an exception');
-    }
-
+    $self->shutdown('Exiting due to an exception') if !$self->{shutdown};
     $kernel->sig_handled();
     return;
 }
 
 sub sig_int {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
-
-    if (!$self->{shutdown}) {
-        $self->shutdown('Exiting due to SIGINT');
-    }
+    $self->shutdown('Exiting due to SIGINT') if !$self->{shutdown};
     $kernel->sig_handled();
     return;
 }
@@ -502,10 +510,7 @@ sub sig_int {
 sub sig_term {
     my ($kernel, $self) = @_[KERNEL, OBJECT];
 
-    if (!$self->{shutdown}) {
-        $self->shutdown('Exiting due to SIGTERM');
-    }
-
+    $self->shutdown('Exiting due to SIGTERM') if !$self->{shutdown};
     $kernel->sig_handled();
     return;
 }
