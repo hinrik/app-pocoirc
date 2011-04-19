@@ -567,7 +567,8 @@ to load locally (one object per component) or globally (single object)
 call methods on the IRC component(s).
 
 It can be used to launch IRC bots or proxies, loaded with plugins of your
-choice. It is also very useful for testing and debugging IRC servers.
+choice. It is very useful for testing and debugging
+L<POE::Component::IRC|POE::Component::IRC> plugins as well as IRC servers.
 
 =back
 
@@ -576,7 +577,7 @@ choice. It is also very useful for testing and debugging IRC servers.
  nick:     foobar1234
  username: foobar
  log_file: /my/log.file
- lib:      '/my/modules'
+ lib:      /my/modules
 
  global_plugins:
    - [CTCP]
@@ -620,8 +621,8 @@ hash will override the ones specified at the top level.
 The C<global_plugins> and C<local_plugins> options should consist of an array
 containing the short plugin class name (e.g. 'AutoJoin') and optionally a hash
 of arguments to that plugin. When figuring out the correct package name,
-App::Pocoirc will first try to load POE::Component::IRC::Plugin::I<your_plugin>
-before trying to load I<your_plugin>.
+App::Pocoirc will first try to load POE::Component::IRC::Plugin::I<YourPlugin>
+before trying to load I<YourPlugin>.
 
 The plugins in C<global_plugins> will be instantiated once and then added to
 all IRC components. B<Note:> not all plugins are designed to be used with

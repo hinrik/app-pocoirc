@@ -221,15 +221,16 @@ file already exists.
 
 Arguments to the B<-j> option can be a channel name (e.g. '#foo') or a channel
 name and a password separated by a comma (e.g. '#foo,bar'). If you specify
-any channels, an AutoJoin plugin with these parameters will be added to
-your IRC component.
+any channels, an L<AutoJoin|POE::Component::IRC::Plugin::AutoJoin> plugin with
+these parameters will be added to your IRC component.
 
-When you use the B<-N> option, a NickServID plugin will be added for you with
-the supplied password.
+When you use the B<-N> option, a
+L<NickServID|POE::Component::IRC::Plugin::NickServID> plugin will be added
+for you with the supplied password.
 
 Arguments to the B<-a> option should consist of the class name (the
 "POE::Component::IRC::Plugin::" prefix can be omitted if it applies), zero
-or more whitespace, and possibly a JSON hash of arguments to the plugin's
+or more whitespace, and optionally a JSON hash of arguments to the plugin's
 constructor:
 
  -a AutoJoin
