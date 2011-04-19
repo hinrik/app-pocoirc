@@ -210,7 +210,7 @@ sub _construct_objects {
     if ($self->{interactive}) {
         require App::Pocoirc::ReadLine;
         push @$own_plugs, [
-            'PocoircReadline',
+            'PocoircReadLine',
             App::Pocoirc::ReadLine->new(
                 Pocoirc  => $self,
                 cfg_file => $self->{cfg_file},
@@ -261,25 +261,22 @@ sub _register_plugins {
         my ($network, $irc) = @$entry;
         $self->_status($network, 'normal', 'Registering plugins');
 
-        for my $plugin (@$global, @{ $local->{$network} }) {
-            my ($class, $object) = @$plugin;
-            my $name = $class.$session_id;
-            $irc->plugin_add($name, $object,
-                network => $network,
-                status  => sub { $self->_status($self->_irc_to_network($irc)."/$name", @_) },
-            );
-        }
-
-        # add our own plugins and bump them to the front of the pipeline
-        for my $own_plugin (reverse @$own) {
-            my ($name, $plugin) = @$own_plugin;
-
-            $irc->plugin_add($name.$session_id, $plugin,
+        # add our own plugins first
+        for my $own_plugin (@$own) {
+            my ($name, $object) = @$own_plugin;
+            $irc->plugin_add("${name}_$session_id", $object,
                 network => $network,
                 status  => sub { $self->_status($self->_irc_to_network($irc), @_) },
             );
-            my $idx = $irc->pipeline->get_index($plugin);
-            $irc->pipeline->bump_up($plugin, $idx);
+        }
+
+        # the rest will get a plugin-specific status callback
+        for my $plugin (@$global, @{ $local->{$network} }) {
+            my ($name, $object) = @$plugin;
+            $irc->plugin_add("${name}_$session_id", $object,
+                network => $network,
+                status  => sub { $self->_status($self->_irc_to_network($irc)."/$name", @_) },
+            );
         }
     }
 
