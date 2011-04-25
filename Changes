@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.37  Mon Apr 25 23:59:48 GMT 2011
     - Preserve symlinks in all supplied filenames
     - When using --trace, print the name (e.g. ERR_NICKNAMEINUSE) of every
       numberic event
