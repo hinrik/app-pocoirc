@@ -168,6 +168,18 @@ sub S_identified {
     return PCI_EAT_NONE;
 }
 
+sub S_isupport {
+    my ($self, $irc) = splice @_, 0, 2;
+    my $isupport = ${ $_[0] };
+    my $network  = $isupport->isupport('NETWORK');
+    $self->_event_debug($irc, 'S_isupport', \@_) if $self->{Trace};
+
+    if (!defined $self->{Dynamic} && defined $network && length $network) {
+        $irc->send_event_next('irc_network', $network);
+    }
+    return PCI_EAT_NONE;
+}
+
 sub S_nick {
     my ($self, $irc) = splice @_, 0, 2;
     my $user    = _normalize(${ $_[0] });

@@ -204,6 +204,7 @@ sub _construct_objects {
                 Pocoirc => $self,
                 Trace   => $self->{trace},
                 Verbose => $self->{verbose},
+                Dynamic => (defined $self->{cfg_file} ? 1 : 0),
             ),
         ],
     ];
@@ -214,7 +215,6 @@ sub _construct_objects {
             'PocoircReadLine',
             App::Pocoirc::ReadLine->new(
                 Pocoirc  => $self,
-                cfg_file => $self->{cfg_file},
             ),
         ];
     }
