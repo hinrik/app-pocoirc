@@ -81,6 +81,7 @@ sub run {
                 irc_plugin_add
                 irc_plugin_del
                 irc_plugin_error
+                irc_plugin_status
                 irc_433
                 irc_isupport
                 irc_shutdown
@@ -261,21 +262,10 @@ sub _register_plugins {
         my ($network, $irc) = @$entry;
         $self->_status($network, 'normal', 'Registering plugins');
 
-        # add our own plugins first
-        for my $own_plugin (@$own) {
-            my ($name, $object) = @$own_plugin;
-            $irc->plugin_add("${name}_$session_id", $object,
-                network => $network,
-                status  => sub { $self->_status($self->_irc_to_network($irc), @_) },
-            );
-        }
-
-        # the rest will get a plugin-specific status callback
-        for my $plugin (@$global, @{ $local->{$network} }) {
+        for my $plugin (@$own, @$global, @{ $local->{$network} }) {
             my ($name, $object) = @$plugin;
             $irc->plugin_add("${name}_$session_id", $object,
                 network => $network,
-                status  => sub { $self->_status($self->_irc_to_network($irc)."/$name", @_) },
             );
         }
     }
@@ -370,10 +360,22 @@ sub irc_plugin_error {
     return;
 }
 
+sub irc_plugin_status {
+    my ($self, $plugin, @args) = @_[OBJECT, ARG0..$#_];
+    my $irc        = $_[SENDER]->get_heap();
+    my $plugins    = $irc->plugin_list();
+    my %plug2alias = map { $plugins->{$_} => $_ } keys %$plugins;
+
+    my $extension = ref $plugin eq 'App::Pocoirc::Status'
+        ? ''
+        : "/$plug2alias{$plugin}";
+    $self->_status($self->_irc_to_network($irc).$extension, @args);
+    return;
+}
+
 sub irc_shutdown {
     my ($self) = $_[OBJECT];
     my $irc = $_[SENDER]->get_heap();
-
     $self->_event_debug($irc, 'S_shutdown', [@_[ARG0..$#_]]) if $self->{trace};
     $self->_status($irc, 'normal', 'IRC component shut down');
     return;
