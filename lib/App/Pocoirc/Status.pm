@@ -17,33 +17,8 @@ sub PCI_register {
     my ($self, $irc, %args) = @_;
 
     $irc->raw_events(1) if $self->{Verbose};
-
-    if ($self->{Trace}) {
-        $irc->plugin_register($self, 'SERVER', 'all');
-        $irc->plugin_register($self, 'USER', 'all');
-    }
-    else {
-        $irc->plugin_register($self, 'SERVER', qw(
-            connected
-            disconnected
-            snotice
-            notice
-            001
-            identified
-            quit
-            nick
-            join
-            part
-            kick
-            error
-            socketerr
-            shutdown
-            socks_failed
-            socks_rejected
-            raw
-            raw_out
-        ));
-    }
+    $irc->plugin_register($self, 'SERVER', 'all');
+    $irc->plugin_register($self, 'USER', 'all');
     return 1;
 }
 
