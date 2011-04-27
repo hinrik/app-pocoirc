@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.40  Wed Apr 27 05:50:35 GMT 2011
     - Oops. Didn't avoid custom stringification everywhere. Fixed.
     - Allow command-line option bundling, e.g. -itv instead of -i -t -v
 
