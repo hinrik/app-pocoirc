@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Getopt::Long qw(:config autohelp no_ignore_case);
+use Getopt::Long qw(:config autohelp no_ignore_case bundling);
 
 my %args;
 my $success = GetOptions(
