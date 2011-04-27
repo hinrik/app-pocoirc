@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.39  Wed Apr 27 03:32:46 GMT 2011
     - Fix missing name for numeric 001 under --trace. Also depend on
       IRC::Utils 0.07 for even more numeric names.
     - Avoid custom stringifications when dumping objects with --trace
