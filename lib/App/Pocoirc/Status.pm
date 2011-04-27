@@ -130,7 +130,7 @@ sub S_001 {
     my $server = ${ $_[0] };
     my $nick = $irc->nick_name();
     my $event = 'S_001 ('.numeric_to_name('001').')';
-    $self->_event_debug($irc, 'event', \@_) if $self->{Trace};
+    $self->_event_debug($irc, $event, \@_) if $self->{Trace};
     $irc->send_event_next('irc_plugin_status', $self, 'normal', "Logged in to server $server with nick $nick");
     return PCI_EAT_NONE;
 }

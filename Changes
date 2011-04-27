@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Fix missing name for numeric 001 under --trace. Also depend on
+      IRC::Utils 0.07 for even more numeric names.
 
 0.38  Tue Apr 26 22:03:37 GMT 2011
     - Replace status callbacks with irc_plugin_status events
