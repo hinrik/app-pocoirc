@@ -82,10 +82,13 @@ sub run {
                 irc_plugin_del
                 irc_plugin_error
                 irc_plugin_status
-                irc_433
                 irc_isupport
                 irc_shutdown
             )],
+            $self => {
+                irc_432 => 'irc_432_or_433',
+                irc_433 => 'irc_432_or_433',
+            },
         ],
     );
 
@@ -314,7 +317,7 @@ sub _event_debug {
 }
 
 # let's log this if it's preventing us from logging in
-sub irc_433 {
+sub irc_432_or_433 {
     my $self = $_[OBJECT];
     my $irc = $_[SENDER]->get_heap();
     my $reason = decode_irc($_[ARG2]->[1]);
