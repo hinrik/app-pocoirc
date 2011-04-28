@@ -5,6 +5,7 @@ Revision history for App-Pocoirc
     - Decode any IRC strings before printing them under --trace
     - Enabling 'verbose' in --interactive after startup wasn't working
     - Fix output encoding in a few spots
+    - POE::Wheel::Run with an exec()'d child was failing under --interactive
 
 0.40  Wed Apr 27 05:50:35 GMT 2011
     - Oops. Didn't avoid custom stringification everywhere. Fixed.

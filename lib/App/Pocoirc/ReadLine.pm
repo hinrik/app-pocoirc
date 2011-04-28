@@ -21,8 +21,7 @@ sub new {
                 _start
                 got_user_input
                 got_output
-                pipe_error
-                close_pipes
+                restore_stdio
             )],
         ],
     );
@@ -62,52 +61,29 @@ sub _start {
     open my $orig_stdout, '>&', STDOUT or die "Can't dup STDOUT: $!";
     $self->{orig_stdout} = $orig_stdout;
 
-    my ($read_stderr, $read_stdout) = (gensym(), gensym());
-    pipe $read_stderr, STDERR or do {
-        open STDERR, '>&=', '2';
-        die "Can't pipe STDERR: $!";
-    };
-    pipe $read_stdout, STDOUT or do {
-        open STDOUT, '>&=', 1;
-        die "Can't pipe STDOUT: $!";
-    };
-    STDOUT->autoflush(1);
+    my ($read_stdout, $write_stdout) = (gensym(), gensym());
+    pipe $read_stdout, $write_stdout;
+    $self->{read_stdout} = $read_stdout;
+    open STDOUT, '>&', $write_stdout or die "Can't pipe STDOUT: $!";
+
+    my ($read_stderr, $write_stderr) = (gensym(), gensym());
+    pipe $read_stderr, $write_stderr;
+    $self->{read_stderr} = $read_stderr;
+    open STDERR, '>&', $write_stderr or die "Can't pipe STDERR: $!";
     STDERR->autoflush(1);
+
     binmode $_, ':utf8' for (*STDOUT, *STDERR);
 
     $self->{stderr_reader} = POE::Wheel::ReadWrite->new(
         Handle     => $read_stderr,
         InputEvent => 'got_output',
-        ErrorEvent => 'pipe_error',
     );
     $self->{stdout_reader} = POE::Wheel::ReadWrite->new(
         Handle     => $read_stdout,
         InputEvent => 'got_output',
-        ErrorEvent => 'pipe_error',
     );
 
     $self->{console}->get();
-    return;
-}
-
-sub pipe_error {
-    my ($self) = $_[OBJECT];
-
-    $self->{closed_pipe}++;
-    if ($self->{closed_pipe} == 2) {
-        delete $self->{stderr_reader};
-        delete $self->{stdout_reader};
-        delete $self->{console};
-
-        my $orig_stderr = delete $self->{orig_stderr};
-        open STDERR, '>&', $orig_stderr;
-        STDERR->autoflush(1);
-
-        my $orig_stdout = delete $self->{orig_stdout};
-        open STDOUT, '>&', $orig_stdout;
-
-        binmode $_, ':encoding(utf8)', for (*STDERR, *STDOUT);
-    }
     return;
 }
 
@@ -218,13 +194,25 @@ sub S_network {
 
 sub shutdown {
     my ($self, $irc) = splice @_, 0, 2;
-    $poe_kernel->post($self->{session_id}, 'close_pipes');
+    $poe_kernel->post($self->{session_id}, 'restore_stdio');
     return PCI_EAT_NONE;
 }
 
-sub close_pipes {
-    close STDOUT;
-    close STDERR;
+sub restore_stdio {
+    my ($self) = $_[OBJECT];
+
+    my $orig_stderr = delete $self->{orig_stderr};
+    open STDERR, '>&', $orig_stderr;
+    STDERR->autoflush(1);
+
+    my $orig_stdout = delete $self->{orig_stdout};
+    open STDOUT, '>&', $orig_stdout;
+
+    binmode $_, ':encoding(utf8)', for (*STDERR, *STDOUT);
+
+    delete $self->{console};
+    delete $self->{stderr_reader};
+    delete $self->{stdout_reader};
     return;
 }
 
