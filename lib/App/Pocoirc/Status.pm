@@ -68,7 +68,8 @@ sub _dump {
         return overload::StrVal($arg);
     }
     elsif (defined $arg) {
-        return looks_like_number($arg) ? $arg : "'$arg'";
+        return $arg if looks_like_number($arg);
+        return "'".decode_irc($arg)."'";
     }
     else {
         return 'undef';
@@ -267,9 +268,7 @@ sub S_raw {
 
 sub S_raw_out {
     my ($self, $irc) = splice @_, 0, 2;
-    my $raw = ${ $_[0] };
-    $raw = strip_color($raw);
-    $raw = strip_formatting($raw);
+    my $raw = _normalize(${ $_[0] });
     return PCI_EAT_NONE if !$self->{Verbose};
     $irc->send_event_next('irc_plugin_status', $self, 'debug', ">>> $raw");
     return PCI_EAT_NONE;

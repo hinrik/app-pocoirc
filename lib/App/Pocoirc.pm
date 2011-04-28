@@ -26,6 +26,9 @@ sub new {
 sub run {
     my ($self) = @_;
 
+    # we print IRC output, which will be UTF-8
+    binmode $_, ':utf8' for (*STDOUT, *STDERR);
+
     if ($self->{list_plugins}) {
         require Module::Pluggable;
         Module::Pluggable->import(
@@ -299,7 +302,7 @@ sub _dump {
     }
     elsif (defined $arg) {
         return $arg if looks_like_number($arg);
-        return decode_irc($arg);
+        return "'".decode_irc($arg)."'";
     }
     else {
         return 'undef';

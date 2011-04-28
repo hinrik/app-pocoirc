@@ -73,6 +73,7 @@ sub _start {
     };
     STDOUT->autoflush(1);
     STDERR->autoflush(1);
+    binmode $_, ':utf8' for (*STDOUT, *STDERR);
 
     $self->{stderr_reader} = POE::Wheel::ReadWrite->new(
         Handle     => $read_stderr,
@@ -104,6 +105,8 @@ sub pipe_error {
 
         my $orig_stdout = delete $self->{orig_stdout};
         open STDOUT, '>&', $orig_stdout;
+
+        binmode $_, ':encoding(utf8)', for (*STDERR, *STDOUT);
     }
     return;
 }
