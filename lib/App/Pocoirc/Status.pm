@@ -16,7 +16,7 @@ sub new {
 sub PCI_register {
     my ($self, $irc, %args) = @_;
 
-    $irc->raw_events(1) if $self->{Verbose};
+    $irc->raw_events(1);
     $irc->plugin_register($self, 'SERVER', 'all');
     $irc->plugin_register($self, 'USER', 'all');
     return 1;
