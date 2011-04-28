@@ -54,8 +54,6 @@ sub run {
         eval {
             Proc::Daemon::Init->();
             if (defined $self->{log_file}) {
-                close STDOUT;
-                close STDERR;
                 open STDOUT, '>>:encoding(utf8)', $self->{log_file}
                     or die "Can't open $self->{log_file}: $!\n";
                 open STDERR, '>>&STDOUT' or die "Can't redirect STDERR: $!\n";
