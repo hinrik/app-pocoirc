@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.42  Thu Apr 28 22:45:16 GMT 2011
     - Fix the same exec() problem as in the previous release, this time under
       --daemonize, because we were closing STDOUT/STDERR before redirecting
       them, which is not good.
