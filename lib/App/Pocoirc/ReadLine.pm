@@ -202,11 +202,11 @@ sub restore_stdio {
     my ($self) = $_[OBJECT];
 
     my $orig_stderr = delete $self->{orig_stderr};
-    open STDERR, '>&', $orig_stderr;
+    open STDERR, '>&', $orig_stderr or warn "Failed to restore STDERR: $!";
     STDERR->autoflush(1);
 
     my $orig_stdout = delete $self->{orig_stdout};
-    open STDOUT, '>&', $orig_stdout;
+    open STDOUT, '>&', $orig_stdout or warn "Failed to restore STDERR: $!";
 
     binmode $_, ':encoding(utf8)', for (*STDERR, *STDOUT);
 
