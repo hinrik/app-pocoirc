@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.41  Thu Apr 28 21:32:16 GMT 2011
     - Log it if we fail to log in due to a bad nickname
     - Decode any IRC strings before printing them under --trace
     - Enabling 'verbose' in --interactive after startup wasn't working
