@@ -298,7 +298,8 @@ sub _dump {
         return overload::StrVal($arg);
     }
     elsif (defined $arg) {
-        return looks_like_number($arg) ? $arg : "'$arg'";
+        return $arg if looks_like_number($arg);
+        return decode_irc($arg);
     }
     else {
         return 'undef';
