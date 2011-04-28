@@ -524,9 +524,6 @@ sub shutdown {
     my ($self, $reason) = @_;
 
     $self->_status(undef, 'normal', $reason);
-    for my $plugin (@{ $self->{own_plugins} }) {
-        $plugin->[1]->shutdown() if $plugin->[1]->can('shutdown');
-    }
 
     my $logged_in;
     for my $irc (@{ $self->{ircs} }) {

@@ -42,6 +42,8 @@ sub PCI_register {
 }
 
 sub PCI_unregister {
+    my ($self, $irc, %args) = @_;
+    $poe_kernel->call($self->{session_id}, 'restore_stdio');
     return 1;
 }
 
@@ -189,12 +191,6 @@ sub S_network {
             $self->{ircs}{$network} = $irc;
         }
     }
-    return PCI_EAT_NONE;
-}
-
-sub shutdown {
-    my ($self, $irc) = splice @_, 0, 2;
-    $poe_kernel->post($self->{session_id}, 'restore_stdio');
     return PCI_EAT_NONE;
 }
 
