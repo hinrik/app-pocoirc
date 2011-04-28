@@ -50,8 +50,7 @@ my $success = GetOptions(
 if (!$success || @ARGV) {
     warn "Unrecognized arguments: @ARGV\n" if @ARGV;
     require Pod::Usage;
-    Pod::Usage->import();
-    pod2usage();
+    Pod::Usage::pod2usage();
 }
 
 my $procname = 'pocoirc';
