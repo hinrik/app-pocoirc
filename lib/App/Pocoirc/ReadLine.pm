@@ -162,11 +162,12 @@ sub _print_help {
     print <<'EOF';
 Type "network foo" to switch networks, or "networks" for a list of networks.
 
-Type ".foo 'bar'" to call the method "foo" with the argument 'bar" on the
-IRC component. You must quote your arguments since they will be eval'd.
+Type ".foo 'bar', 'baz'" to call the method "foo" with the arguments 'bar'
+and 'baz' on the IRC component. You must quote your arguments since they
+will be eval'd, and don't forget to use commas between arguments.
 
-Type "/foo 'bar' 'baz'" to call the POE::Component::IRC command foo with the
-arguments 'bar' and 'baz'. This is equivalent to: .yield 'foo' 'bar' 'baz'
+Type "/foo 'bar', 'baz'" to call the POE::Component::IRC command foo with the
+arguments 'bar' and 'baz'. This is equivalent to: .yield 'foo', 'bar', 'baz'
 
 Type "verbose" and "trace" to flip those features on/off.
 EOF

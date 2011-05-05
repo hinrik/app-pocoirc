@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Fix the interactive help message, it implied that commas weren't
+      needed in lists
 
 0.42  Thu Apr 28 22:45:16 GMT 2011
     - Fix the same exec() problem as in the previous release, this time under
