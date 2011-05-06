@@ -38,12 +38,16 @@ sub PCI_register {
 
     $self->{ircs}{$args{network}} = $irc;
     $irc->plugin_register($self, 'SERVER', 'network');
+    $self->{registered}++;
     return 1;
 }
 
 sub PCI_unregister {
     my ($self, $irc, %args) = @_;
-    $poe_kernel->call($self->{session_id}, 'restore_stdio');
+    $self->{registered}--;
+    if ($self->{registered} == 0) {
+        $poe_kernel->call($self->{session_id}, 'restore_stdio');
+    }
     return 1;
 }
 
