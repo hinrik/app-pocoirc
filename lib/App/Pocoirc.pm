@@ -83,7 +83,7 @@ sub run {
                 irc_plugin_del
                 irc_plugin_error
                 irc_plugin_status
-                irc_isupport
+                irc_network
                 irc_shutdown
             )],
             $self => {
@@ -330,12 +330,15 @@ sub irc_432_or_433 {
 }
 
 # fetch the server name if we're not using a config file
-sub irc_isupport {
-    my ($self, $isupport) = @_[OBJECT, ARG0];
-    my $network = $isupport->isupport('NETWORK');
+sub irc_network {
+    my ($self, $sender, $network) = @_[OBJECT, SENDER, ARG0];
+    my $irc = $sender->get_heap();
 
-    if (!defined $self->{cfg_file} && defined $network && length $network) {
-        $self->{ircs}[0][0] = $network;
+    for my $idx (0..$#{ $self->{ircs} }) {
+        if ($self->{ircs}[$idx][1] == $irc) {
+            $self->{ircs}[$idx][0] = $network;
+            last;
+        }
     }
     return;
 }
