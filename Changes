@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.43  Thu May 19 15:40:10 GMT 2011
     - Fix the interactive help message, it implied that commas weren't
       needed in lists
     - ReadLine.pm: Only restore stdio when we have been unregistered from
