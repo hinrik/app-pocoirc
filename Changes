@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.44  Sun May 22 16:12:13 GMT 2011
     - Don't hang under --interactive if an exception is raised on startup
 
 0.43  Thu May 19 15:40:10 GMT 2011
