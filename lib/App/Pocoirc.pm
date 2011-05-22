@@ -545,7 +545,7 @@ sub shutdown {
         $obj->yield('shutdown', $reason, 5);
     }
 
-    $self->{resolver}->shutdown();
+    $self->{resolver}->shutdown() if $self->{resolver};
     $self->{shutdown} = 1;
     return;
 }

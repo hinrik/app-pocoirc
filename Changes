@@ -1,6 +1,7 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - Don't hang under --interactive if an exception is raised on startup
 
 0.43  Thu May 19 15:40:10 GMT 2011
     - Fix the interactive help message, it implied that commas weren't
