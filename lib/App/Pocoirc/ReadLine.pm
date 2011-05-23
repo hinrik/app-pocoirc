@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 use Carp;
 use Data::Dump 'dump';
+use IO::WrapOutput;
 use POE;
 use POE::Component::IRC::Plugin qw(PCI_EAT_NONE);
 use POE::Wheel::ReadLine;
@@ -65,31 +66,13 @@ sub _start {
         AppName    => 'pocoirc',
     );
 
-    open my $orig_stderr, '>&', STDERR or die "Can't dup STDERR: $!";
-    $self->{orig_stderr} = $orig_stderr;
-
-    open my $orig_stdout, '>&', STDOUT or die "Can't dup STDOUT: $!";
-    $self->{orig_stdout} = $orig_stdout;
-
-    my ($read_stdout, $write_stdout) = (gensym(), gensym());
-    pipe $read_stdout, $write_stdout;
-    $self->{read_stdout} = $read_stdout;
-    open STDOUT, '>&', $write_stdout or die "Can't pipe STDOUT: $!";
-
-    my ($read_stderr, $write_stderr) = (gensym(), gensym());
-    pipe $read_stderr, $write_stderr;
-    $self->{read_stderr} = $read_stderr;
-    open STDERR, '>&', $write_stderr or die "Can't pipe STDERR: $!";
-    STDERR->autoflush(1);
-
-    binmode $_, ':utf8' for (*STDOUT, *STDERR);
-
+    my ($stdout, $stderr) = wrap_output();
     $self->{stderr_reader} = POE::Wheel::ReadWrite->new(
-        Handle     => $read_stderr,
+        Handle     => $stderr,
         InputEvent => 'got_output',
     );
     $self->{stdout_reader} = POE::Wheel::ReadWrite->new(
-        Handle     => $read_stdout,
+        Handle     => $stdout,
         InputEvent => 'got_output',
     );
 
@@ -205,15 +188,7 @@ sub S_network {
 sub restore_stdio {
     my ($self) = $_[OBJECT];
 
-    my $orig_stderr = delete $self->{orig_stderr};
-    open STDERR, '>&', $orig_stderr or warn "Failed to restore STDERR: $!";
-    STDERR->autoflush(1);
-
-    my $orig_stdout = delete $self->{orig_stdout};
-    open STDOUT, '>&', $orig_stdout or warn "Failed to restore STDERR: $!";
-
-    binmode $_, ':encoding(utf8)', for (*STDERR, *STDOUT);
-
+    unwrap_output();
     delete $self->{console};
     delete $self->{stderr_reader};
     delete $self->{stdout_reader};
