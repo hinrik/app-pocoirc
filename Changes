@@ -2,6 +2,8 @@ Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Replaced the IO wrapping code in ReadLine.pm with IO::WrapOutput
+    - Depend on Term::Cap and Term::ReadKey, which are needed by
+      POE::Wheel::ReadLine
 
 0.44  Sun May 22 16:12:13 GMT 2011
     - Don't hang under --interactive if an exception is raised on startup
