@@ -183,7 +183,7 @@ sub _start {
 
     for my $entry (@{ $self->{ircs} }) {
         my ($network, $irc) = @$entry;
-        $self->_status($network, 'normal', 'Connecting to IRC');
+        $self->_status($network, 'normal', 'Connecting to IRC ('.$irc->server.')');
         $irc->yield('connect');
     }
 
