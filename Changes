@@ -2,6 +2,8 @@ Revision history for App-Pocoirc
 
 {{$NEXT}}
     - Show the server hostname in the "Connecting to IRC" status message
+    - Strip the unhelpful "at FOO line BAR" suffix from eval errors in the
+      console UI
 
 0.45  Wed May 25 06:30:38 GMT 2011
     - Replaced the IO wrapping code in ReadLine.pm with IO::WrapOutput

@@ -134,6 +134,8 @@ sub got_user_input {
             };
             if (my $err = $@) {
                 chomp $err;
+                my $our_file = __FILE__;
+                $err =~ s{ at \Q$our_file\E line [0-9]+\.$}{};
                 warn $err, "\n";
             }
         }
