@@ -24,7 +24,7 @@ sub PCI_register {
 
     $self->{registered}++;
 
-    if ($self->{registered} == 0) {
+    if ($self->{registered} == 1) {
         POE::Session->create(
             object_states => [
                 $self => [qw(
@@ -34,8 +34,8 @@ sub PCI_register {
                     restore_stdio
                 )],
             ],
+            args => [$args{network}],
         );
-        $self->{console}->get("$args{network}> ");
     }
 
     if (!defined $self->{ui_irc}) {
@@ -57,7 +57,7 @@ sub PCI_unregister {
 }
 
 sub _start {
-    my ($kernel, $session, $self) = @_[KERNEL, SESSION, OBJECT];
+    my ($kernel, $session, $self, $network) = @_[KERNEL, SESSION, OBJECT, ARG0];
 
     $self->{session_id} = $session->ID();
     $self->{console} = POE::Wheel::ReadLine->new(
@@ -76,6 +76,7 @@ sub _start {
         InputEvent => 'got_output',
     );
 
+    $self->{console}->get("$network> ");
     return;
 }
 
