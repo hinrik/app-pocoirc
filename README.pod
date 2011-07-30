@@ -69,7 +69,7 @@ L<POE::Component::IRC::State|POE::Component::IRC::State>.
 
 =head2 Networks
 
-The C<networks> option should be hash of network hashes. The keys are the
+The C<networks> option should be a hash of network hashes. The keys are the
 names of the networks. A network hash can contain C<local_plugins> and
 parameters to POE::Component::IRC. None are required, except C<server> if not
 defined at the top level. The POE::Component::IRC parameters specified in this
@@ -103,8 +103,8 @@ Here is some example output from the program:
  2011-04-18 18:10:52 [magnet]    Spawning IRC component (POE::Component::IRC::State)
  2011-04-18 18:10:52 [freenode]  Registering plugins
  2011-04-18 18:10:52 [magnet]    Registering plugins
- 2011-04-18 18:10:52 [freenode]  Connecting to IRC
- 2011-04-18 18:10:52 [magnet]    Connecting to IRC
+ 2011-04-18 18:10:52 [freenode]  Connecting to IRC (irc.freenode.net)
+ 2011-04-18 18:10:52 [magnet]    Connecting to IRC (irc.perl.org)
  2011-04-18 18:10:52 [freenode]  Added plugin Whois3
  2011-04-18 18:10:52 [freenode]  Added plugin ISupport3
  2011-04-18 18:10:52 [freenode]  Added plugin DCC3
