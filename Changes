@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.46  Sat Jul 30 00:12:21 GMT 2011
     - Show the server hostname in the "Connecting to IRC" status message
     - Strip the unhelpful "at FOO line BAR" suffix from eval errors in the
       console UI
