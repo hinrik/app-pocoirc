@@ -5,6 +5,8 @@ Revision history for App-Pocoirc
       class if the other one doesn't exist.
     - Require latest Class::Load so that errors from class loading won't
       mention Class::Load.
+    - Remove POE::Kernel::USE_SIGCHLD override. POE enables it by default on
+      recent Perls these days.
 
 0.46  Sat Jul 30 00:12:21 GMT 2011
     - Show the server hostname in the "Connecting to IRC" status message
