@@ -248,17 +248,30 @@ sub _construct_objects {
 sub _load_either_class {
     my ($primary, $secondary) = @_;
 
-    my ($success, $error, $errors);
+    my ($success, $error, @err);
     ($success, $error) = try_load_class($primary);
     return $primary if $success;
 
-    $errors .= $error;
+    push @err, $error;
     ($success, $error) = try_load_class($secondary);
     return $secondary if $success;
 
     chomp $error if defined $error;
-    $errors .= $error;
-    die "Failed to load class $primary or $secondary: $errors\n";
+    push @err, $error;
+
+    my $class = "$primary or $secondary";
+    if (@err == 2) {
+        if ($err[0] =~ /^Can't locate / && $err[1] !~ /^Can't locate /) {
+            $class = $secondary;
+            shift @err;
+        }
+        elsif ($err[1] =~ /^Can't locate / && $err[0] !~ /^Can't locate /) {
+            $class = $primary;
+            pop @err;
+        }
+    }
+    my $reason = join "\n", map { "  $_" } @err;
+    die "Failed to load class $class:\n$reason\n";
 }
 
 sub _register_plugins {

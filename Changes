@@ -1,6 +1,10 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+    - When failing to load two classes, only show the error for the existent
+      class if the other one doesn't exist.
+    - Require latest Class::Load so that errors from class loading won't
+      mention Class::Load.
 
 0.46  Sat Jul 30 00:12:21 GMT 2011
     - Show the server hostname in the "Connecting to IRC" status message
