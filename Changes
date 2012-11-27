@@ -1,6 +1,8 @@
 Revision history for App-Pocoirc
 
 {{$NEXT}}
+
+0.47  Tue Nov 27 20:31:02 GMT 2012
     - When failing to load two classes, only show the error for the existent
       class if the other one doesn't exist.
     - Require latest Class::Load so that errors from class loading won't
