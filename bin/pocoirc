@@ -23,7 +23,9 @@ my $success = GetOptions(
 
     # network-specific config options
     '6|ipv6'         => \$args{ipv6},
-    'S|ssl'          => \$args{ssl},
+    'S|ssl'          => \$args{usessl},
+	'sslcert=s'      => \$args{sslcert},
+	'sslkey=s'       => \$args{sslkey},
     'C|class=s'      => \$args{class},
     's|server=s'     => \$args{server},
     'p|port=s'       => \$args{port},
@@ -160,7 +162,7 @@ else {
                 %direct_args,
                 (map {
                     defined $args{$_} ? ($_ => $args{$_}) : ()
-                } qw(class server port password nick username ircname ipv6 ssl)),
+                } qw(class server port password nick username ircname ipv6 usessl sslcert sslkey)),
             }
         },
     };
@@ -209,6 +211,8 @@ B<pocoirc> <options>
    -a FOO, --plugin FOO         Add plugin FOO (see below)
    -6, --ipv6,                  Use IPv6
    -S, --ssl,                   Use SSL
+       --sslcert certfile       Use SSL Cert
+       --sslkey  keyfile        Use SSL Key
    -A FOO:BAR, --arg FOO:BAR    Arbitrary argument to POE::Component::IRC
    -C FOO, --class FOO          Component class, e.g. State or Qnet::State
    -I FOO, --lib FOO            A Perl library directory to include
